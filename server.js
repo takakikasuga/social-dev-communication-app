@@ -8,12 +8,11 @@ const usersRouter = require('./routes/api/users');
 const authRouter = require('./routes/api/auth');
 const postsRouter = require('./routes/api/posts');
 const profileRouter = require('./routes/api/profile');
+// リクエストの種類をログで出力する
+app.use(morgan('dev'));
 
 // mongoDBと接続
 connectDB();
-
-// リクエストの種類をログで出力する
-app.use(morgan('dev'));
 
 // リクエスト本体のデータを受け取る
 app.use(express.json({ extended: false }));
