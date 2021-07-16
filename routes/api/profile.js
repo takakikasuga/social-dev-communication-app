@@ -29,8 +29,53 @@ router
     ],
     profileController.createAndUpdateProfile
   )
-  .get(profileController.getAllUserprofiles);
+  .get(profileController.getAllUserprofiles)
+  .delete(
+    authMiddleware.secureRouteValidateJsonWebToken,
+    profileController.deleteUserprofile
+  );
 
 router.route('/user/:user_id').get(profileController.getUserprofile);
+
+router
+  .route('/experience')
+  .put(
+    authMiddleware.secureRouteValidateJsonWebToken,
+    [
+      body('title', 'title is required!!').not().isEmpty(),
+      body('company', 'Company is required!!').not().isEmpty(),
+      body('from', 'From date is required!!').not().isEmpty()
+    ],
+    profileController.addExperience
+  );
+
+router
+  .route('/experience/:experience_id')
+  .delete(
+    authMiddleware.secureRouteValidateJsonWebToken,
+    profileController.deleteExperience
+  );
+
+router
+  .route('/education')
+  .put(
+    authMiddleware.secureRouteValidateJsonWebToken,
+    [
+      body('school', 'School is required!!').not().isEmpty(),
+      body('degree', ' Degree is required!!').not().isEmpty(),
+      body('fieldofstudy', 'fieldofstudy is required!!').not().isEmpty(),
+      body('from', 'From date is required!!').not().isEmpty()
+    ],
+    profileController.addEducation
+  );
+
+router
+  .route('/education/:education_id')
+  .delete(
+    authMiddleware.secureRouteValidateJsonWebToken,
+    profileController.deleteEducation
+  );
+
+router.route('/github/:username').get(profileController.getUserGithub);
 
 module.exports = router;
