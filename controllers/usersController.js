@@ -1,4 +1,6 @@
 const gravatar = require('gravatar');
+const jwt = require('jsonwebtoken');
+const config = require('config');
 const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
@@ -32,7 +34,7 @@ exports.registerUser = async (req, res) => {
       size: '200',
       rating: 'pg',
       // mmはデフォルトで画像を差し込んでくれる（ミステリーマン）
-      default: 'mm'
+      default: 'robohash'
     });
 
     // ユーザーモデルのインスタンスを作成
@@ -47,11 +49,36 @@ exports.registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
     console.log('ハッシュ化したuser.password', user.password);
+    console.log('user', user);
 
     // データベースにユーザー情報を保管する
     await user.save();
+    console.log('after saved user', user);
 
-    res.send('User Registerd');
+    const payload = {
+      user: {
+        id: user._id
+      }
+    };
+
+    // expiresIn: 3600は1時間
+    console.log('payload', payload);
+    // jwtとしてユーザー情報のObjectIdを登録
+    jwt.sign(
+      payload,
+      config.get('jwtSecret'),
+      { expiresIn: 3600 },
+      (err, token) => {
+        // エラーだったらエラーを投げる
+        if (err)
+          return res.status(400).json({ errors: [{ msg: err.message }] });
+        // そうでなかったらトークンを返す
+        res.json({
+          token,
+          msg: 'Getting the original token is success'
+        });
+      }
+    );
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
