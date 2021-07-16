@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const ProfileSchema = new mongoose.Schema({
   user: {
     // mongoDBが自動で出力するIDである
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     // userデータベースを参照する（poplatedメソッドを使えるようにする）
     ref: 'User'
   },

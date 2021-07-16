@@ -29,13 +29,13 @@ router
     ],
     profileController.createAndUpdateProfile
   )
-  .get(profileController.getAllUserprofiles)
+  .get(profileController.getAllUserProfiles)
   .delete(
     authMiddleware.secureRouteValidateJsonWebToken,
     profileController.deleteUserprofile
   );
 
-router.route('/user/:user_id').get(profileController.getUserprofile);
+router.route('/user/:user_id').get(profileController.getUserProfile);
 
 router
   .route('/experience')
