@@ -107,7 +107,7 @@ exports.createAndUpdateProfile = async (req, res) => {
 //@desc      Get all profiles
 //@access    Public
 
-exports.getAllUserprofiles = async (req, res) => {
+exports.getAllUserProfiles = async (req, res) => {
   try {
     const profiles = await Profile.find()
       .populate('user', ['name', 'avatar'])
@@ -124,7 +124,7 @@ exports.getAllUserprofiles = async (req, res) => {
 //@desc      Get profiles by user ID
 //@access    Public
 
-exports.getUserprofile = async (req, res) => {
+exports.getUserProfile = async (req, res) => {
   try {
     const profile = await Profile.findOne({ user: req.params.user_id })
       .populate('user', ['name', 'avatar'])
