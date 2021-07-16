@@ -75,7 +75,7 @@ exports.registerUser = async (req, res) => {
         // そうでなかったらトークンを返す
         res.json({
           token,
-          msg: 'Getting the original token is success'
+          msg: 'Getting the original token is success and User account have registered!!'
         });
       }
     );
