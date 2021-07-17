@@ -1,58 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { FC, Fragment } from 'react';
 
-function App() {
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+// components
+import { Navbar } from './components/layout/index';
+import { Landing } from './components/layout/index';
+import { Login } from './components/auth/index';
+import { Register } from './components/auth/index';
+
+const App: FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+    <Router>
+      <Fragment>
+        <Navbar></Navbar>
+        <Route exact path='/' component={Landing}></Route>
+        <section className='container'>
+          <Switch>
+            <Route exact path='/register' component={Register}></Route>
+            <Route exact path='/login' component={Login}></Route>
+          </Switch>
+        </section>
+      </Fragment>
+    </Router>
   );
-}
+};
 
 export default App;
