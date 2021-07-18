@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 interface ButtonProps {
   children: string;
-  colorName: string;
+  buttonColor: string;
   textColor:
     | 'text-primary'
     | 'text-secondary'
@@ -13,9 +13,14 @@ interface ButtonProps {
   type: 'button' | 'submit' | 'reset' | undefined;
 }
 
-const Button: FC<ButtonProps> = ({ children, colorName, type, textColor }) => {
+const Button: FC<ButtonProps> = ({
+  children,
+  buttonColor,
+  type,
+  textColor
+}) => {
   return (
-    <button type={type} className={`btn btn-${colorName} ${textColor}`}>
+    <button type={type} className={`btn btn-${buttonColor} ${textColor}`}>
       {children}
     </button>
   );

@@ -18,12 +18,12 @@ const Landing: FC = () => {
             開発者のためのソーシャルネットワークコミュニケーションプラットフォームです。知見のシェアと繋がりを創って発者同士盛り上げていきましょう。
           </SubText>
           <Link to='/register'>
-            <Button colorName='info' type='button' textColor='text-white'>
+            <Button buttonColor='info' type='button' textColor='text-white'>
               新規登録
             </Button>
           </Link>
           <Link to='/login'>
-            <Button type='button' colorName='light' textColor='text-dark'>
+            <Button type='button' buttonColor='light' textColor='text-dark'>
               ログイン
             </Button>
           </Link>

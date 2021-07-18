@@ -2,10 +2,14 @@ import React, { FC, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
-// スタイルコンポーネント
-import { ErrorParagraph } from '../../styles/errorParagraph';
+// コンポーネント
+import { InputName } from '../atoms/index';
+import { InputEmail } from '../atoms/index';
+import { InputPassword } from '../atoms/index';
+import { InputConfirmPassword } from '../atoms/index';
+import { Button } from '../atoms/index';
 
-interface registerInputValue {
+export interface RegisterInputValue {
   name: string;
   email: string;
   password: string;
@@ -16,15 +20,16 @@ const Register: FC = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-    control
-  } = useForm<registerInputValue>({
+    getValues
+  } = useForm<RegisterInputValue>({
+    mode: 'onBlur',
     defaultValues: { name: '', email: '', password: '', confirmPassword: '' }
   });
 
-  const onSubmit: SubmitHandler<registerInputValue> = () => {
+  const onSubmit: SubmitHandler<RegisterInputValue> = (formData) => {
     console.log('通過しました。');
+    console.log('formData', formData);
   };
 
   return (
@@ -35,58 +40,54 @@ const Register: FC = () => {
       </p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className='mb-3'>
-          <label htmlFor='name' className='form-label'>
-            Name
-          </label>
-          <input
-            {...register('name', {
+          <InputName
+            error={errors.name!}
+            register={register('name', {
               required: '名前を入力してください'
             })}
-            type='text'
-            className='form-control'
-            id='name'
           />
-          {errors.name && (
-            <ErrorParagraph>{errors.name.message}</ErrorParagraph>
-          )}
         </div>
         <div className='mb-3'>
-          <label
-            {...register('email', {
+          <InputEmail
+            error={errors.email!}
+            register={register('email', {
               required: 'メールアドレスを入力してください'
             })}
-            htmlFor='email'
-            className='form-label'>
-            Email address
-          </label>
-          <input
-            type='email'
-            className='form-control'
-            id='email'
-            aria-describedby='emailHelp'
           />
-          {errors.email && (
-            <ErrorParagraph>{errors.email.message}</ErrorParagraph>
-          )}
-          <div id='emailHelp' className='form-text'>
-            We'll never share your email with anyone else.
-          </div>
         </div>
         <div className='mb-3'>
-          <label htmlFor='password' className='form-label'>
-            Password
-          </label>
-          <input type='password' className='form-control' id='password' />
+          <InputPassword
+            error={errors.password!}
+            register={register('password', {
+              required: 'パスワードを入力してください',
+              minLength: {
+                value: 6,
+                message: 'パスワードは最低６文字以上にしてください。'
+              }
+            })}
+          />
         </div>
         <div className='mb-3'>
-          <label htmlFor='password' className='form-label'>
-            Confirm Password
-          </label>
-          <input type='password' className='form-control' id='password' />
+          <InputConfirmPassword
+            error={errors.confirmPassword!}
+            register={register('confirmPassword', {
+              required: 'パスワードを入力してください',
+              minLength: {
+                value: 6,
+                message: 'パスワードは最低６文字以上にしてください。'
+              },
+              validate: (value) => {
+                return (
+                  value === getValues('password') ||
+                  'パスワードを一致させてください。'
+                );
+              }
+            })}
+          />
         </div>
-        <button type='submit' className='btn btn-primary'>
+        <Button type='submit' buttonColor='primary' textColor='text-white'>
           新規登録
-        </button>
+        </Button>
         <p className='mt-5'>
           既にアカウントを持っている方はこちら。{' '}
           <Link to='/login'>ログイン</Link>
