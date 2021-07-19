@@ -17,6 +17,7 @@ const InputName: FC<InputNameProps> = ({ register, error }) => {
         Name
       </label>
       <input
+        autoComplete='on'
         {...register}
         type='text'
         placeholder='Name'

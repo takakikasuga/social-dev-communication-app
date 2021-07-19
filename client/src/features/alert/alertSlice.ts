@@ -1,55 +1,66 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { fetchCount } from './alertAPI';
+import { removeAlertAPI } from './alertAPI';
 
-export interface CounterState {
-  value: number;
-  status: 'idle' | 'loading' | 'failed';
+export interface AlertStatus {
+  alertType: string;
+  id: string;
+  message: string;
 }
 
-const initialState: CounterState = {
-  value: 0,
-  status: 'idle'
+interface AlertState {
+  alertStatus: AlertStatus[];
+  status: 'success' | 'loading' | 'failed';
+}
+
+const initialState: AlertState = {
+  alertStatus: [],
+  status: 'loading'
 };
 
-export const incrementAsync = createAsyncThunk(
-  'counter/fetchCount',
-  async (amount: number) => {
-    const response = await fetchCount(amount);
-    return response.data;
-  }
-);
+export const removeAlertAsync = createAsyncThunk<
+  string,
+  { id: string; timeout?: number },
+  any
+>('alert/removeAlert', async ({ id, timeout = 5000 }) => {
+  const response = await removeAlertAPI(id, timeout);
+  return response.id;
+});
 
-export const counterSlice = createSlice({
-  name: 'counter',
+export const alertSlice = createSlice({
+  name: 'alert',
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1;
-    },
-    decrement: (state) => {
-      state.value -= 1;
+    setAlert: (state, action) => {
+      console.log('発火しています。');
+      state.status = 'success';
+      state.alertStatus.push(action.payload);
+      return state;
     },
 
     incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload;
+      return state;
     }
   },
-
   extraReducers: (builder) => {
     builder
-      .addCase(incrementAsync.pending, (state) => {
+      .addCase(removeAlertAsync.pending, (state) => {
         state.status = 'loading';
+        return state;
       })
-      .addCase(incrementAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
-        state.value += action.payload;
+      .addCase(removeAlertAsync.fulfilled, (state, action) => {
+        state.status = 'success';
+        const filterAlertStatus = state.alertStatus.filter((alert) => {
+          return alert.id !== action.payload;
+        });
+        state.alertStatus = filterAlertStatus;
+        return state;
       });
   }
 });
 
-export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export const { setAlert, incrementByAmount } = alertSlice.actions;
 
-export const selectCount = (state: RootState) => state.counter.value;
+export const raiseAlertState = (state: RootState) => state.alert.alertStatus;
 
-export default counterSlice.reducer;
+export default alertSlice.reducer;

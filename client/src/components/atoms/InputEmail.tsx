@@ -17,6 +17,7 @@ const InputEmail: FC<InputEmailProps> = ({ register, error }) => {
         Email address
       </label>
       <input
+        autoComplete='on'
         {...register}
         placeholder='Email'
         type='email'

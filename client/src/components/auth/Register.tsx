@@ -1,6 +1,7 @@
 import React, { FC, Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 
 // コンポーネント
 import { InputName } from '../atoms/index';
@@ -8,6 +9,9 @@ import { InputEmail } from '../atoms/index';
 import { InputPassword } from '../atoms/index';
 import { InputConfirmPassword } from '../atoms/index';
 import { Button } from '../atoms/index';
+
+// スライサー
+import { registerUserAsync, authStatus } from '../../features/auth/authSlice';
 
 export interface RegisterInputValue {
   name: string;
@@ -17,6 +21,8 @@ export interface RegisterInputValue {
 }
 
 const Register: FC = () => {
+  const dispatch = useDispatch();
+  const auth = useSelector(authStatus);
   const {
     register,
     handleSubmit,
@@ -30,7 +36,11 @@ const Register: FC = () => {
   const onSubmit: SubmitHandler<RegisterInputValue> = (formData) => {
     console.log('通過しました。');
     console.log('formData', formData);
+    dispatch(registerUserAsync(formData));
   };
+
+  // ログイン状態であった場合はリダイレクトする
+  if (auth.isAuthenticated) return <Redirect to='/dashboard' />;
 
   return (
     <Fragment>

@@ -20,6 +20,7 @@ const InputConfirmPassword: FC<InputConfirmPasswordProps> = ({
         Confirm Password
       </label>
       <input
+        autoComplete='on'
         placeholder='ConfirmPassword'
         {...register}
         type='password'
