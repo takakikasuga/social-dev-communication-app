@@ -6,6 +6,8 @@ import { useParams, Link } from 'react-router-dom';
 import { Spinner } from '../layout/index';
 import { ProfileTop } from './index';
 import { ProfileAbout } from './index';
+import { ProfileExperience } from './index';
+import { ProfileEducation } from './index';
 
 // スライサー
 import {
@@ -45,6 +47,40 @@ const Profile: FC = () => {
           <div>
             <ProfileTop profile={profile.profile} />
             <ProfileAbout profile={profile.profile} />
+            <div>
+              <h2>経歴</h2>
+              {profile.profile.experience!.length > 0 ? (
+                <Fragment>
+                  {profile.profile.experience!.map((experience, index) => {
+                    return (
+                      <ProfileExperience
+                        experience={experience}
+                        key={experience._id}
+                      />
+                    );
+                  })}
+                </Fragment>
+              ) : (
+                <h4>経験が追加されていません。</h4>
+              )}
+            </div>
+            <div>
+              <h2>学歴</h2>
+              {profile.profile.education!.length > 0 ? (
+                <Fragment>
+                  {profile.profile.education!.map((education, index) => {
+                    return (
+                      <ProfileEducation
+                        education={education}
+                        key={education._id}
+                      />
+                    );
+                  })}
+                </Fragment>
+              ) : (
+                <h4>教育、学歴が追加されていません。</h4>
+              )}
+            </div>
           </div>
         </Fragment>
       )}
