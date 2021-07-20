@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 
 // コンポーネント
 import { Spinner } from '../layout/index';
+import { ProfileTop } from './index';
 
 // スライサー
 import {
@@ -40,6 +41,9 @@ const Profile: FC = () => {
               プロフィール編集へ
             </Link>
           ) : null}
+          <div>
+            <ProfileTop profile={profile.profile} />
+          </div>
         </Fragment>
       )}
     </Fragment>

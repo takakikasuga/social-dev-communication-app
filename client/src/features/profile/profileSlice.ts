@@ -496,6 +496,14 @@ export const profileSlice = createSlice({
           };
         }
       )
+      .addCase(getCurrentProfileAsync.fulfilled, (state, action) => {
+        return {
+          ...state,
+          profile: action.payload,
+          status: 'success',
+          loading: false
+        };
+      })
       .addCase(getProfileByIdAsync.pending, (state) => {
         state.status = 'loading';
         return state;

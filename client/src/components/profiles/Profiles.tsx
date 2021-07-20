@@ -1,5 +1,10 @@
-import React, { FC, Fragment, useEffect } from 'react';
+import React, { FC, Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import ReactPaginate from 'react-paginate';
+
+// スタイル（読み込むことで適用される）
+import '../../styles/css/pagination.css';
+
 // コンポーネント
 import { Spinner } from '../layout/index';
 import { ProfileItem } from './index';
@@ -10,12 +15,30 @@ import {
   profileStatus
 } from '../../features/profile/profileSlice';
 
+const PER_PAGE = 10;
+const LAST_DISPLAY_PAGES = 2;
+const AROUND_DISPLAY_PAGES = 2;
+
 const Profiles: FC = () => {
   const dispatch = useDispatch();
   const profile = useSelector(profileStatus);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const offset = currentPage * PER_PAGE;
+  const pageCount = Math.ceil(profile.profiles.length / PER_PAGE);
+  const handlePageClick = ({ selected }: { selected: number }) => {
+    console.log('selected', selected);
+    setCurrentPage(selected);
+  };
   useEffect(() => {
     dispatch(getAllProfilesAsync({}));
   }, [dispatch]);
+
+  const currentPageData = profile.profiles
+    .slice(offset, offset + PER_PAGE)
+    .map((profile) => {
+      return <ProfileItem profile={profile} key={profile._id} />;
+    });
+
   return (
     <Fragment>
       {profile.loading ? (
@@ -29,13 +52,20 @@ const Profiles: FC = () => {
           <div>
             {profile.profiles.length > 0 ? (
               <Fragment>
-                {profile.profiles.map((profile) => {
-                  return (
-                    <ProfileItem
-                      profile={profile}
-                      key={profile._id}></ProfileItem>
-                  );
-                })}
+                {currentPageData}
+                <ReactPaginate
+                  previousLabel={'← Previous'}
+                  nextLabel={'Next →'}
+                  pageCount={pageCount}
+                  marginPagesDisplayed={LAST_DISPLAY_PAGES}
+                  pageRangeDisplayed={AROUND_DISPLAY_PAGES}
+                  onPageChange={handlePageClick}
+                  containerClassName={'pagination'}
+                  previousLinkClassName={'pagination__link'}
+                  nextLinkClassName={'pagination__link'}
+                  disabledClassName={'pagination__link--disabled'}
+                  activeClassName={'pagination__link--active'}
+                />
               </Fragment>
             ) : (
               <h4>プロフィールを登録しているユーザーがいません。。</h4>
