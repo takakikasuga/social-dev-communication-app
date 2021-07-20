@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 // コンポーネント
 import { Spinner } from '../layout/index';
 import { DashboardActions } from './index';
+import { Experience } from './index';
+import { Education } from './index';
 
 // スライサー
 import {
@@ -31,6 +33,8 @@ const Dashboard: FC = () => {
       {profile.profile !== null ? (
         <Fragment>
           <DashboardActions />
+          <Experience />
+          <Education />
         </Fragment>
       ) : (
         <Fragment>

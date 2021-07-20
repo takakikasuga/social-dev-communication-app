@@ -37,6 +37,7 @@ interface ProfileData {
     company: string;
     location: string;
     from: string;
+    to?: string;
     description: string;
     current?: boolean;
   }[];
