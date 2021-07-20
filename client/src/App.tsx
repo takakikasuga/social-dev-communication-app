@@ -13,6 +13,7 @@ import { Dashboard } from './components/dashboard/index';
 import { CreateProfile } from './components/profile-form/index';
 import { EditProfile } from './components/dashboard/index';
 import { AddExperience } from './components/profile-form/index';
+import { AddEducation } from './components/profile-form/index';
 
 // 権限ルート
 import { PrivateRoute } from './components/routing/index';
@@ -56,6 +57,9 @@ const App: FC = () => {
             <PrivateRoute
               path='/add-experience'
               component={AddExperience}></PrivateRoute>
+            <PrivateRoute
+              path='/add-education'
+              component={AddEducation}></PrivateRoute>
           </Switch>
         </section>
       </Fragment>

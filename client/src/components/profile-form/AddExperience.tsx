@@ -119,7 +119,7 @@ const AddExperience: FC = () => {
         <div className='mb-3'>
           <TextareaValidation
             id='description'
-            placeholder='Description'
+            placeholder='Job Description'
             error={errors.description!}
             register={register('description')}>
             詳細

@@ -18,6 +18,7 @@ import {
 import { setAlert, removeAlertAsync } from '../alert/alertSlice';
 import { CreateProfileValue } from '../../components/profile-form/CreateProfile';
 import { AddExperienceValue } from '../../components/profile-form/AddExperience';
+import { AddEducationValue } from '../../components/profile-form/AddEducation';
 
 interface ProfileData {
   _id: string;
@@ -205,7 +206,7 @@ export const addExperienceAsync = createAsyncThunk<
 
 export const addEducationAsync = createAsyncThunk<
   any,
-  { formData: any; history: H.History },
+  { formData: AddEducationValue; history: H.History },
   ThunkConfig
 >(
   'profile/addEducation',
