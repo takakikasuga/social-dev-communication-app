@@ -4,19 +4,20 @@ import { AddExperienceValue } from '../../components/profile-form/AddExperience'
 import { AddEducationValue } from '../../components/profile-form/AddEducation';
 
 export const getCurrentProfile = () => {
-  return axios.get('api/profile/me');
+  return axios.get('/api/profile/me');
 };
 
 export const getAllProfiles = () => {
-  return axios.get('api/profile');
+  return axios.get('/api/profile');
 };
 
 export const getProfileById = (userId: string) => {
-  return axios.get(`api/profile/user/${userId}`);
+  console.log('通信一歩手前');
+  return axios.get(`/api/profile/user/${userId}`);
 };
 
 export const getGithubRepos = (username: string) => {
-  return axios.get(`api/profile/github/${username}`);
+  return axios.get(`/api/profile/github/${username}`);
 };
 
 export const createOrUpdateProfile = (formData: CreateProfileValue) => {

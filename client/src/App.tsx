@@ -15,6 +15,7 @@ import { EditProfile } from './components/dashboard/index';
 import { AddExperience } from './components/profile-form/index';
 import { AddEducation } from './components/profile-form/index';
 import { Profiles } from './components/profiles/index';
+import { Profile } from './components/profile/index';
 
 // 権限ルート
 import { PrivateRoute } from './components/routing/index';
@@ -47,6 +48,10 @@ const App: FC = () => {
             <Route exact path='/register' component={Register}></Route>
             <Route exact path='/login' component={Login}></Route>
             <Route exact path='/profiles' component={Profiles}></Route>
+            <Route
+              exact
+              path='/profile/:profile_id'
+              component={Profile}></Route>
             <PrivateRoute
               path='/dashboard'
               component={Dashboard}></PrivateRoute>
