@@ -8,10 +8,16 @@ import { RootState } from '../../app/store';
 import * as H from 'history';
 import { v4 } from 'uuid';
 
-import { getCurrentProfile, createOrUpdateProfile } from './profileAPI';
+import {
+  getCurrentProfile,
+  createOrUpdateProfile,
+  addExperienceProfile,
+  addEducationProfile
+} from './profileAPI';
 
 import { setAlert, removeAlertAsync } from '../alert/alertSlice';
 import { CreateProfileValue } from '../../components/profile-form/CreateProfile';
+import { AddExperienceValue } from '../../components/profile-form/AddExperience';
 
 interface ProfileData {
   _id: string;
@@ -155,6 +161,90 @@ export const createOrUpdateProfileAsync = createAsyncThunk<
   }
 );
 
+export const addExperienceAsync = createAsyncThunk<
+  any,
+  { formData: AddExperienceValue; history: H.History },
+  ThunkConfig
+>(
+  'profile/addExperience',
+  async ({ formData, history }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await addExperienceProfile(formData);
+      console.log('addExperienceAsync/response', response);
+      const id = v4();
+      dispatch(
+        setAlert({
+          message: 'Experience Added',
+          alertType: 'success',
+          id
+        })
+      );
+      dispatch(removeAlertAsync({ id, timeout: 5000 }));
+      history.push('/dashboard');
+
+      return response.data;
+    } catch (err: any) {
+      const response = err.response;
+      console.log('rejectWithValue/response', response);
+      const errors = response.data.errors as { msg: string }[];
+      if (errors) {
+        const id = v4();
+        errors.forEach((error: { msg: string }) => {
+          console.log(' error.msg', error.msg);
+          dispatch(setAlert({ message: error.msg, alertType: 'danger', id }));
+          dispatch(removeAlertAsync({ id, timeout: 3000 }));
+        });
+      }
+      return rejectWithValue({
+        status: response.status,
+        message: response.data.msg
+      });
+    }
+  }
+);
+
+export const addEducationAsync = createAsyncThunk<
+  any,
+  { formData: any; history: H.History },
+  ThunkConfig
+>(
+  'profile/addEducation',
+  async ({ formData, history }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await addEducationProfile(formData);
+      console.log('addEducationAsync/response', response);
+      const id = v4();
+      dispatch(
+        setAlert({
+          message: 'Education Added',
+          alertType: 'success',
+          id
+        })
+      );
+      dispatch(removeAlertAsync({ id, timeout: 5000 }));
+      history.push('/dashboard');
+
+      return response.data;
+    } catch (err: any) {
+      const response = err.response;
+      console.log('rejectWithValue/response', response);
+      const errors = response.data.errors as { msg: string }[];
+      if (errors) {
+        const id = v4();
+        errors.forEach((error: { msg: string }) => {
+          console.log(' error.msg', error.msg);
+          dispatch(setAlert({ message: error.msg, alertType: 'danger', id }));
+          dispatch(removeAlertAsync({ id, timeout: 3000 }));
+        });
+      }
+      return rejectWithValue({
+        status: response.status,
+        message: response.data.msg
+      });
+    }
+  }
+);
+
 export const profileSlice = createSlice({
   name: 'profile',
   initialState,
@@ -219,6 +309,52 @@ export const profileSlice = createSlice({
         }
       )
       .addCase(createOrUpdateProfileAsync.fulfilled, (state, action) => {
+        return {
+          ...state,
+          profile: action.payload,
+          status: 'success',
+          loading: false
+        };
+      })
+      .addCase(addExperienceAsync.pending, (state) => {
+        state.status = 'loading';
+        return state;
+      })
+      .addCase(
+        addExperienceAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(addExperienceAsync.fulfilled, (state, action) => {
+        return {
+          ...state,
+          profile: action.payload,
+          status: 'success',
+          loading: false
+        };
+      })
+      .addCase(addEducationAsync.pending, (state) => {
+        state.status = 'loading';
+        return state;
+      })
+      .addCase(
+        addEducationAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(addEducationAsync.fulfilled, (state, action) => {
         return {
           ...state,
           profile: action.payload,

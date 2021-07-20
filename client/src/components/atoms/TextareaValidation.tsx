@@ -4,10 +4,9 @@ import React, { FC, Fragment } from 'react';
 import { ErrorParagraph } from '../../styles/errorParagraph';
 import { FieldError, UseFormRegisterReturn } from 'react-hook-form';
 
-interface InputValidateProps {
+interface TextareaValidationProps {
   register: UseFormRegisterReturn;
   error: FieldError;
-  inputType: string;
   placeholder: string;
   id: string;
   children: string;
@@ -16,10 +15,9 @@ interface InputValidateProps {
   disabled?: boolean;
 }
 
-const InputValidation: FC<InputValidateProps> = ({
+const TextareaValidation: FC<TextareaValidationProps> = ({
   register,
   error,
-  inputType,
   placeholder,
   id,
   children,
@@ -38,11 +36,10 @@ const InputValidation: FC<InputValidateProps> = ({
       {classIconName && (
         <i className={classIconName} style={styleIconColor}></i>
       )}
-      <input
+      <textarea
         disabled={disabled}
         autoComplete='on'
         {...register}
-        type={inputType}
         placeholder={placeholder}
         className='form-control'
         id={id}
@@ -52,4 +49,4 @@ const InputValidation: FC<InputValidateProps> = ({
   );
 };
 
-export default InputValidation;
+export default TextareaValidation;

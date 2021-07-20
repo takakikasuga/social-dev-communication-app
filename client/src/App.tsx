@@ -12,6 +12,7 @@ import { Register } from './components/auth/index';
 import { Dashboard } from './components/dashboard/index';
 import { CreateProfile } from './components/profile-form/index';
 import { EditProfile } from './components/dashboard/index';
+import { AddExperience } from './components/profile-form/index';
 
 // 権限ルート
 import { PrivateRoute } from './components/routing/index';
@@ -52,6 +53,9 @@ const App: FC = () => {
             <PrivateRoute
               path='/edit-profile'
               component={EditProfile}></PrivateRoute>
+            <PrivateRoute
+              path='/add-experience'
+              component={AddExperience}></PrivateRoute>
           </Switch>
         </section>
       </Fragment>
