@@ -2,6 +2,7 @@ const request = require('request');
 const config = require('config');
 const Profile = require('../models/Profile');
 const User = require('../models/User');
+const Post = require('../models/Post');
 const { validationResult } = require('express-validator');
 
 //@route     GET api/profile/me
@@ -151,6 +152,8 @@ exports.getUserProfile = async (req, res) => {
 
 exports.deleteUserprofile = async (req, res) => {
   try {
+    // 投稿情報の削除
+    await Post.deleteMany({ user: req.user.id });
     // ユーザーのプロフィールを削除
     await Profile.findOneAndRemove({ user: req.user.id });
     // ユーザー情報を削除
