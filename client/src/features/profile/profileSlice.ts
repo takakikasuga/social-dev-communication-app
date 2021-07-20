@@ -12,8 +12,13 @@ import {
   getCurrentProfile,
   createOrUpdateProfile,
   addExperienceProfile,
-  addEducationProfile
+  addEducationProfile,
+  deleteExperienceProfile,
+  deleteEducationProfile,
+  deleteAccount
 } from './profileAPI';
+
+import { logout } from '../auth/authSlice';
 
 import { setAlert, removeAlertAsync } from '../alert/alertSlice';
 import { CreateProfileValue } from '../../components/profile-form/CreateProfile';
@@ -247,6 +252,117 @@ export const addEducationAsync = createAsyncThunk<
   }
 );
 
+export const deleteExperienceAsync = createAsyncThunk<any, string, ThunkConfig>(
+  'profile/deleteExperience',
+  async (objectId, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await deleteExperienceProfile(objectId);
+
+      const id = v4();
+      dispatch(
+        setAlert({
+          message: 'Experience Deleted',
+          alertType: 'success',
+          id
+        })
+      );
+      dispatch(removeAlertAsync({ id, timeout: 5000 }));
+
+      return response.data;
+    } catch (err: any) {
+      const response = err.response;
+      console.log('rejectWithValue/response', response);
+      const errors = response.data.errors as { msg: string }[];
+      if (errors) {
+        const id = v4();
+        errors.forEach((error: { msg: string }) => {
+          console.log(' error.msg', error.msg);
+          dispatch(setAlert({ message: error.msg, alertType: 'danger', id }));
+          dispatch(removeAlertAsync({ id, timeout: 3000 }));
+        });
+      }
+      return rejectWithValue({
+        status: response.status,
+        message: response.data.msg
+      });
+    }
+  }
+);
+
+export const deleteEducationAsync = createAsyncThunk<any, string, ThunkConfig>(
+  'profile/deleteEducation',
+  async (objectId, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await deleteEducationProfile(objectId);
+
+      const id = v4();
+      dispatch(
+        setAlert({
+          message: 'Education Deleted',
+          alertType: 'success',
+          id
+        })
+      );
+      dispatch(removeAlertAsync({ id, timeout: 5000 }));
+
+      return response.data;
+    } catch (err: any) {
+      const response = err.response;
+      console.log('rejectWithValue/response', response);
+      const errors = response.data.errors as { msg: string }[];
+      if (errors) {
+        const id = v4();
+        errors.forEach((error: { msg: string }) => {
+          console.log(' error.msg', error.msg);
+          dispatch(setAlert({ message: error.msg, alertType: 'danger', id }));
+          dispatch(removeAlertAsync({ id, timeout: 3000 }));
+        });
+      }
+      return rejectWithValue({
+        status: response.status,
+        message: response.data.msg
+      });
+    }
+  }
+);
+
+export const deleteAccountAsync = createAsyncThunk<any, {}, ThunkConfig>(
+  'profile/deleteAccount',
+  async ({}, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await deleteAccount();
+      dispatch(logout());
+      const id = v4();
+      dispatch(
+        setAlert({
+          message: 'Account Deleted',
+          alertType: 'success',
+          id
+        })
+      );
+      dispatch(removeAlertAsync({ id, timeout: 5000 }));
+
+      return response.data;
+    } catch (err: any) {
+      const response = err.response;
+      console.log('rejectWithValue/response', response);
+      const errors = response.data.errors as { msg: string }[];
+      if (errors) {
+        const id = v4();
+        errors.forEach((error: { msg: string }) => {
+          console.log(' error.msg', error.msg);
+          dispatch(setAlert({ message: error.msg, alertType: 'danger', id }));
+          dispatch(removeAlertAsync({ id, timeout: 3000 }));
+        });
+      }
+      return rejectWithValue({
+        status: response.status,
+        message: response.data.msg
+      });
+    }
+  }
+);
+
 export const profileSlice = createSlice({
   name: 'profile',
   initialState,
@@ -260,13 +376,6 @@ export const profileSlice = createSlice({
         loading: false,
         status: 'success'
       };
-    },
-    decrement: (state) => {
-      return state;
-    },
-
-    incrementByAmount: (state, action) => {
-      return state;
     }
   },
 
@@ -362,6 +471,77 @@ export const profileSlice = createSlice({
           profile: action.payload,
           status: 'success',
           loading: false
+        };
+      })
+      .addCase(deleteExperienceAsync.pending, (state) => {
+        state.status = 'loading';
+        return state;
+      })
+      .addCase(
+        deleteExperienceAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(deleteExperienceAsync.fulfilled, (state, action) => {
+        return {
+          ...state,
+          profile: action.payload,
+          status: 'success',
+          loading: false
+        };
+      })
+      .addCase(deleteEducationAsync.pending, (state) => {
+        state.status = 'loading';
+        return state;
+      })
+      .addCase(
+        deleteEducationAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(deleteEducationAsync.fulfilled, (state, action) => {
+        return {
+          ...state,
+          profile: action.payload,
+          status: 'success',
+          loading: false
+        };
+      })
+      .addCase(deleteAccountAsync.pending, (state) => {
+        state.status = 'loading';
+        return state;
+      })
+      .addCase(
+        deleteAccountAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(deleteAccountAsync.fulfilled, (state) => {
+        return {
+          ...state,
+          profile: null,
+          profiles: [],
+          repos: [],
+          loading: false,
+          status: 'success'
         };
       });
   }

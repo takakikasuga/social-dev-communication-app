@@ -1,15 +1,18 @@
 import React, { FC, Fragment } from 'react';
 import Moment from 'react-moment';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 // コンポーネント
-import { Button } from '../atoms/index';
 import { TableData } from '../../styles/tableDate';
 
 // スライサー
-import { profileStatus } from '../../features/profile/profileSlice';
+import {
+  profileStatus,
+  deleteExperienceAsync
+} from '../../features/profile/profileSlice';
 
 const Experience: FC = () => {
+  const dispatch = useDispatch();
   const profile = useSelector(profileStatus);
 
   const TableDataExp = profile.profile?.experience?.map(
@@ -26,9 +29,14 @@ const Experience: FC = () => {
             {exp.to ? <Moment format='YYYY/MM/DD'>{exp.to}</Moment> : '現在'}
           </TableData>
           <TableData>
-            <Button textColor='text-white' buttonColor='danger' type='button'>
+            <button
+              className='text-white btn btn-danger'
+              type='button'
+              onClick={() => {
+                dispatch(deleteExperienceAsync(exp._id));
+              }}>
               削除
-            </Button>
+            </button>
           </TableData>
         </tr>
       );

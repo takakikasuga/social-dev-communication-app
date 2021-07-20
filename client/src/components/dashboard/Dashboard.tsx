@@ -11,7 +11,8 @@ import { Education } from './index';
 // スライサー
 import {
   getCurrentProfileAsync,
-  profileStatus
+  profileStatus,
+  deleteAccountAsync
 } from '../../features/profile/profileSlice';
 import { authStatus } from '../../features/auth/authSlice';
 
@@ -33,8 +34,27 @@ const Dashboard: FC = () => {
       {profile.profile !== null ? (
         <Fragment>
           <DashboardActions />
-          <Experience />
-          <Education />
+
+          {profile.profile.experience!.length > 0 ||
+          profile.profile.experience === undefined ? (
+            <Experience />
+          ) : null}
+          {profile.profile.education!.length > 0 ||
+          profile.profile.education === undefined ? (
+            <Education />
+          ) : null}
+
+          <div className='my-2'>
+            <button
+              onClick={() => {
+                if (window.confirm('本当にアカウントを削除しますか？')) {
+                  dispatch(deleteAccountAsync({}));
+                }
+              }}
+              className='btn btn-danger'>
+              <i className='fas fa-user-minus'></i> アカウントの削除
+            </button>
+          </div>
         </Fragment>
       ) : (
         <Fragment>

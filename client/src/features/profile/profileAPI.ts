@@ -36,3 +36,15 @@ export const addEducationProfile = (formData: AddEducationValue) => {
 
   return axios.put('/api/profile/education', formData, config);
 };
+
+export const deleteExperienceProfile = (objectId: string) => {
+  return axios.delete(`/api/profile/experience/${objectId}`);
+};
+
+export const deleteEducationProfile = (objectId: string) => {
+  return axios.delete(`/api/profile/education/${objectId}`);
+};
+
+export const deleteAccount = () => {
+  return axios.delete('/api/profile/');
+};

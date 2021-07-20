@@ -1,15 +1,18 @@
 import React, { FC, Fragment } from 'react';
 import Moment from 'react-moment';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 // コンポーネント
-import { Button } from '../atoms/index';
 import { TableData } from '../../styles/tableDate';
 
 // スライサー
-import { profileStatus } from '../../features/profile/profileSlice';
+import {
+  profileStatus,
+  deleteEducationAsync
+} from '../../features/profile/profileSlice';
 
 const Education: FC = () => {
+  const dispatch = useDispatch();
   const profile = useSelector(profileStatus);
 
   const TableDataEdu = profile.profile?.education?.map((edu, index: number) => {
@@ -25,9 +28,14 @@ const Education: FC = () => {
           {edu.to ? <Moment format='YYYY/MM/DD'>{edu.to}</Moment> : '現在'}
         </TableData>
         <TableData>
-          <Button textColor='text-white' buttonColor='danger' type='button'>
+          <button
+            className='text-white btn btn-danger'
+            type='button'
+            onClick={() => {
+              dispatch(deleteEducationAsync(edu._id));
+            }}>
             削除
-          </Button>
+          </button>
         </TableData>
       </tr>
     );
