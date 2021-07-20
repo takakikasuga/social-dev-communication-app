@@ -2,7 +2,7 @@ import React, { FC, Fragment } from 'react';
 
 interface SocialIconProps {
   value: any;
-  socialNet: string;
+  socialNet?: string;
   classIconName: string;
   styleIconColor: React.CSSProperties;
 }

@@ -1,12 +1,19 @@
 import React, { FC } from 'react';
 
+// 型
+import { ProfileData } from '../../features/profile/profileSlice';
+
 // コンポーネント
 import { SocialIcon } from '../atoms/index';
 
 // スタイル
 import { RoundImage, IconLists } from '../../styles/index';
 
-const ProfileTop: FC<any> = ({
+interface ProfileTopProps {
+  profile: ProfileData;
+}
+
+const ProfileTop: FC<ProfileTopProps> = ({
   profile: {
     status,
     company,
@@ -41,25 +48,25 @@ const ProfileTop: FC<any> = ({
         />
         <SocialIcon
           value={social?.facebook}
-          socialNet={social.facebook}
+          socialNet={social?.facebook}
           classIconName='fab fa-facebook fa-2x'
           styleIconColor={{ color: '#3B5998' }}
         />
         <SocialIcon
           value={social?.instagram}
-          socialNet={social.instagram}
+          socialNet={social?.instagram}
           classIconName='fab fa-instagram fa-2x'
           styleIconColor={{ color: '#CF2E92' }}
         />
         <SocialIcon
           value={social?.youtube}
-          socialNet={social.youtube}
+          socialNet={social?.youtube}
           classIconName='fab fa-youtube fa-2x'
           styleIconColor={{ color: '#DA1725' }}
         />
         <SocialIcon
           value={social?.linkedin}
-          socialNet={social.linkedin}
+          socialNet={social?.linkedin}
           classIconName='fab fa-linkedin fa-2x'
           styleIconColor={{ color: '#0e76a8' }}
         />

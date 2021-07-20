@@ -12,7 +12,6 @@ export const getAllProfiles = () => {
 };
 
 export const getProfileById = (userId: string) => {
-  console.log('通信一歩手前');
   return axios.get(`/api/profile/user/${userId}`);
 };
 

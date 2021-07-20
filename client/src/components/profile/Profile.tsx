@@ -5,6 +5,7 @@ import { useParams, Link } from 'react-router-dom';
 // コンポーネント
 import { Spinner } from '../layout/index';
 import { ProfileTop } from './index';
+import { ProfileAbout } from './index';
 
 // スライサー
 import {
@@ -43,6 +44,7 @@ const Profile: FC = () => {
           ) : null}
           <div>
             <ProfileTop profile={profile.profile} />
+            <ProfileAbout profile={profile.profile} />
           </div>
         </Fragment>
       )}
