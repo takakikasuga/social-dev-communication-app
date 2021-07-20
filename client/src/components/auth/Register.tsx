@@ -4,10 +4,8 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
 // コンポーネント
-import { InputName } from '../atoms/index';
-import { InputEmail } from '../atoms/index';
-import { InputPassword } from '../atoms/index';
-import { InputConfirmPassword } from '../atoms/index';
+import { InputValidation } from '../atoms/index';
+
 import { Button } from '../atoms/index';
 
 // スライサー
@@ -50,23 +48,37 @@ const Register: FC = () => {
       </p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className='mb-3'>
-          <InputName
+          <InputValidation
+            id='name'
+            inputType='text'
+            placeholder='Name'
             error={errors.name!}
             register={register('name', {
               required: '名前を入力してください'
-            })}
-          />
+            })}>
+            Name
+          </InputValidation>
         </div>
         <div className='mb-3'>
-          <InputEmail
+          <InputValidation
+            id='email'
+            inputType='text'
+            placeholder='Email'
             error={errors.email!}
             register={register('email', {
               required: 'メールアドレスを入力してください'
-            })}
-          />
+            })}>
+            Email address
+          </InputValidation>
+          <p className='form-text'>
+            We'll never share your email with anyone else.
+          </p>
         </div>
         <div className='mb-3'>
-          <InputPassword
+          <InputValidation
+            id='password'
+            inputType='password'
+            placeholder='Email'
             error={errors.password!}
             register={register('password', {
               required: 'パスワードを入力してください',
@@ -74,11 +86,15 @@ const Register: FC = () => {
                 value: 6,
                 message: 'パスワードは最低６文字以上にしてください。'
               }
-            })}
-          />
+            })}>
+            Password
+          </InputValidation>
         </div>
         <div className='mb-3'>
-          <InputConfirmPassword
+          <InputValidation
+            id='confirmPassword'
+            inputType='password'
+            placeholder='ConfirmPassword'
             error={errors.confirmPassword!}
             register={register('confirmPassword', {
               required: 'パスワードを入力してください',
@@ -92,8 +108,9 @@ const Register: FC = () => {
                   'パスワードを一致させてください。'
                 );
               }
-            })}
-          />
+            })}>
+            Confirm Password
+          </InputValidation>
         </div>
         <Button type='submit' buttonColor='primary' textColor='text-white'>
           新規登録

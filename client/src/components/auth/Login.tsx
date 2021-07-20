@@ -4,8 +4,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
 // コンポーネント
-import { InputEmail } from '../atoms/index';
-import { InputPassword } from '../atoms/index';
+import { InputValidation } from '../atoms/index';
 import { Button } from '../atoms/index';
 
 // スライサー
@@ -44,15 +43,22 @@ const Login: FC = () => {
       </p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className='mb-3'>
-          <InputEmail
+          <InputValidation
+            id='email'
+            inputType='text'
+            placeholder='Email'
             error={errors.email!}
             register={register('email', {
               required: 'メールアドレスを入力してください'
-            })}
-          />
+            })}>
+            Email address
+          </InputValidation>
         </div>
         <div className='mb-3'>
-          <InputPassword
+          <InputValidation
+            id='password'
+            inputType='password'
+            placeholder='Email'
             error={errors.password!}
             register={register('password', {
               required: 'パスワードを入力してください',
@@ -60,8 +66,9 @@ const Login: FC = () => {
                 value: 6,
                 message: 'パスワードは最低６文字以上にしてください。'
               }
-            })}
-          />
+            })}>
+            Password
+          </InputValidation>
         </div>
         <Button type='submit' buttonColor='primary' textColor='text-white'>
           ログイン

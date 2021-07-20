@@ -23,6 +23,7 @@ import { setAuthToken } from '../../utils/index';
 export interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
+  loading: boolean;
   user?: {
     name: string;
     email: string;
@@ -46,7 +47,8 @@ interface ThunkConfig {
 const initialState: AuthState = {
   token: null,
   isAuthenticated: false,
-  status: 'loading'
+  status: 'loading',
+  loading: true
 };
 
 export const loadUserAsync = createAsyncThunk<
@@ -150,8 +152,21 @@ export const authSlice = createSlice({
   name: 'authentication',
   initialState,
   reducers: {
-    increment: (state) => {
-      return state;
+    logout: (state) => {
+      const cloneState = { ...state };
+      console.log('reducers.logout');
+      if (cloneState.user) {
+        delete cloneState.user;
+      }
+      console.log('ここまでは来ているよ');
+      localStorage.removeItem('token');
+      return {
+        ...cloneState,
+        token: null,
+        isAuthenticated: false,
+        loading: false,
+        status: 'success'
+      };
     },
     decrement: (state) => {
       return state;
@@ -177,8 +192,20 @@ export const authSlice = createSlice({
         return {
           ...state,
           token: null,
+          loading: false,
           isAuthenticated: false,
           status: 'failed'
+        };
+      })
+      .addCase(loadUserAsync.fulfilled, (state, action) => {
+        return {
+          ...state,
+          // 読み込み時にトークンが存在する場合
+          token: localStorage.token,
+          status: 'success',
+          loading: false,
+          isAuthenticated: true,
+          user: action.payload
         };
       })
       .addCase(registerUserAsync.pending, (state) => {
@@ -194,6 +221,7 @@ export const authSlice = createSlice({
         return {
           ...state,
           token: null,
+          loading: false,
           isAuthenticated: false,
           status: 'failed'
         };
@@ -203,20 +231,11 @@ export const authSlice = createSlice({
           ...state,
           ...action.payload,
           status: 'success',
+          loading: false,
           isAuthenticated: true
         };
       })
 
-      .addCase(loadUserAsync.fulfilled, (state, action) => {
-        return {
-          ...state,
-          // 読み込み時にトークンが存在する場合
-          token: localStorage.token,
-          status: 'success',
-          isAuthenticated: true,
-          user: action.payload
-        };
-      })
       .addCase(loginUserAsync.pending, (state) => {
         state.status = 'loading';
         return state;
@@ -224,9 +243,13 @@ export const authSlice = createSlice({
       .addCase(loginUserAsync.rejected, (state) => {
         console.log('loginUserAsync.rejected');
         localStorage.removeItem('token');
+        if (state.user) {
+          delete state.user;
+        }
         return {
           ...state,
           token: null,
+          loading: false,
           isAuthenticated: false,
           status: 'failed'
         };
@@ -236,13 +259,14 @@ export const authSlice = createSlice({
           ...state,
           ...action.payload,
           status: 'success',
+          loading: false,
           isAuthenticated: true
         };
       });
   }
 });
 
-export const { increment, decrement, incrementByAmount } = authSlice.actions;
+export const { logout, decrement, incrementByAmount } = authSlice.actions;
 
 export const authStatus = (state: RootState) => state.auth;
 

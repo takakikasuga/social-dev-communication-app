@@ -11,16 +11,29 @@ interface ButtonProps {
     | 'text-white'
     | 'text-dark';
   type: 'button' | 'submit' | 'reset' | undefined;
+  toggleFunc?: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleValue?: boolean;
 }
 
 const Button: FC<ButtonProps> = ({
   children,
   buttonColor,
   type,
-  textColor
+  textColor,
+  toggleFunc,
+  toggleValue
 }) => {
   return (
-    <button type={type} className={`btn btn-${buttonColor} ${textColor}`}>
+    <button
+      type={type}
+      className={`btn btn-${buttonColor} ${textColor}`}
+      onClick={
+        toggleFunc
+          ? () => {
+              toggleFunc(!toggleValue!);
+            }
+          : () => {}
+      }>
       {children}
     </button>
   );
