@@ -45,10 +45,11 @@ const Navbar: FC = () => {
   const AuthLinks = () => {
     return (
       <div className={classes.sectionDesktop}>
+        <Link to='/profiles'>開発者</Link>
         <Link to='/dashboard'>
           <IconButton aria-label='show 17 new notifications' color='inherit'>
             <i className='fas fa-user' style={{ color: '#fff' }} />{' '}
-            <span className='text-dark'> Dashboard</span>
+            <span className='text-dark'>ダッシュボード</span>
           </IconButton>
         </Link>
         <a
@@ -60,7 +61,7 @@ const Navbar: FC = () => {
           <IconButton aria-label='show 42 new mails'>
             <i className='fas fa-sign-out-alt' style={{ color: '#fff' }} />
             {'  '}
-            <span className='text-dark'>Logout</span>
+            <span className='text-dark'>ログアウト</span>
           </IconButton>
         </a>
       </div>
@@ -69,11 +70,7 @@ const Navbar: FC = () => {
   const GuestLinks = () => {
     return (
       <div className={classes.sectionDesktop}>
-        <a href='#!'>
-          <IconButton aria-label='show 42 new mails'>
-            <i className='fas fa-window-restore' style={{ color: '#fff' }} />
-          </IconButton>
-        </a>
+        <Link to='/profiles'>開発者</Link>
         <Link to='/register'>
           <IconButton aria-label='show 17 new notifications' color='inherit'>
             <i className='fas fa-user-plus' style={{ color: '#fff' }} />

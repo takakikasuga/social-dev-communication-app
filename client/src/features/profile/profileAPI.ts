@@ -7,6 +7,18 @@ export const getCurrentProfile = () => {
   return axios.get('api/profile/me');
 };
 
+export const getAllProfiles = () => {
+  return axios.get('api/profile');
+};
+
+export const getProfileById = (userId: string) => {
+  return axios.get(`api/profile/user/${userId}`);
+};
+
+export const getGithubRepos = (username: string) => {
+  return axios.get(`api/profile/github/${username}`);
+};
+
 export const createOrUpdateProfile = (formData: CreateProfileValue) => {
   const config = {
     headers: {

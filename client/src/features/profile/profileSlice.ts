@@ -10,6 +10,9 @@ import { v4 } from 'uuid';
 
 import {
   getCurrentProfile,
+  getAllProfiles,
+  getProfileById,
+  getGithubRepos,
   createOrUpdateProfile,
   addExperienceProfile,
   addEducationProfile,
@@ -25,12 +28,12 @@ import { CreateProfileValue } from '../../components/profile-form/CreateProfile'
 import { AddExperienceValue } from '../../components/profile-form/AddExperience';
 import { AddEducationValue } from '../../components/profile-form/AddEducation';
 
-interface ProfileData {
+export interface ProfileData {
   _id: string;
   skills: string[];
   status: string;
   date: string;
-  __v: number;
+  __v?: number;
   user: {
     _id: string;
     name: string;
@@ -72,7 +75,7 @@ interface ProfileData {
 
 export interface ProfileState {
   profile: ProfileData | null;
-  profiles: any;
+  profiles: ProfileData[];
   repos: any;
   loading: boolean;
   error?: {
@@ -103,7 +106,7 @@ export const getCurrentProfileAsync = createAsyncThunk<
   ProfileData,
   {},
   ThunkConfig
->('profile/getCurrentProfile', async ({}, { rejectWithValue }) => {
+>('profile/getCurrentProfile', async ({}, { dispatch, rejectWithValue }) => {
   try {
     const response = await getCurrentProfile();
     console.log('getCurrentProfileAsync/response', response);
@@ -112,7 +115,104 @@ export const getCurrentProfileAsync = createAsyncThunk<
   } catch (err: any) {
     const response = err.response;
     console.log('rejectWithValue/response', response);
+    const errors = response.data.errors as { msg: string }[];
+    if (errors) {
+      const id = v4();
+      errors.forEach((error: { msg: string }) => {
+        console.log(' error.msg', error.msg);
+        dispatch(setAlert({ message: error.msg, alertType: 'danger', id }));
+        dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      });
+    }
+    return rejectWithValue({
+      status: response.status,
+      message: response.data.msg
+    });
+  }
+});
 
+export const getAllProfilesAsync = createAsyncThunk<
+  ProfileData,
+  {},
+  ThunkConfig
+>('profile/getAllProfiles', async ({}, { dispatch, rejectWithValue }) => {
+  // 都度自アカウントのプロフィール情報は削除する
+  dispatch(clearProfile());
+  try {
+    const response = await getAllProfiles();
+    console.log('getAllProfilesAsync/response', response);
+
+    return response.data;
+  } catch (err: any) {
+    const response = err.response;
+    console.log('rejectWithValue/response', response);
+    const errors = response.data.errors as { msg: string }[];
+    if (errors) {
+      const id = v4();
+      errors.forEach((error: { msg: string }) => {
+        console.log(' error.msg', error.msg);
+        dispatch(setAlert({ message: error.msg, alertType: 'danger', id }));
+        dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      });
+    }
+    return rejectWithValue({
+      status: response.status,
+      message: response.data.msg
+    });
+  }
+});
+
+export const getProfileByIdAsync = createAsyncThunk<
+  ProfileData,
+  string,
+  ThunkConfig
+>('profile/getProfileById', async (userId, { dispatch, rejectWithValue }) => {
+  try {
+    const response = await getProfileById(userId);
+    console.log('getProfileByIdAsync/response', response);
+
+    return response.data;
+  } catch (err: any) {
+    const response = err.response;
+    console.log('rejectWithValue/response', response);
+    const errors = response.data.errors as { msg: string }[];
+    if (errors) {
+      const id = v4();
+      errors.forEach((error: { msg: string }) => {
+        console.log(' error.msg', error.msg);
+        dispatch(setAlert({ message: error.msg, alertType: 'danger', id }));
+        dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      });
+    }
+    return rejectWithValue({
+      status: response.status,
+      message: response.data.msg
+    });
+  }
+});
+
+export const getGithubReposAsync = createAsyncThunk<
+  ProfileData,
+  string,
+  ThunkConfig
+>('profile/GithubRepos', async (username, { dispatch, rejectWithValue }) => {
+  try {
+    const response = await getGithubRepos(username);
+    console.log('getGithubRepos/response', response);
+
+    return response.data;
+  } catch (err: any) {
+    const response = err.response;
+    console.log('rejectWithValue/response', response);
+    const errors = response.data.errors as { msg: string }[];
+    if (errors) {
+      const id = v4();
+      errors.forEach((error: { msg: string }) => {
+        console.log(' error.msg', error.msg);
+        dispatch(setAlert({ message: error.msg, alertType: 'danger', id }));
+        dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      });
+    }
     return rejectWithValue({
       status: response.status,
       message: response.data.msg
@@ -396,10 +496,74 @@ export const profileSlice = createSlice({
           };
         }
       )
-      .addCase(getCurrentProfileAsync.fulfilled, (state, action) => {
+      .addCase(getProfileByIdAsync.pending, (state) => {
+        state.status = 'loading';
+        return state;
+      })
+      .addCase(
+        getProfileByIdAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(getProfileByIdAsync.fulfilled, (state, action) => {
         return {
           ...state,
           profile: action.payload,
+          status: 'success',
+          loading: false
+        };
+      })
+      .addCase(getAllProfilesAsync.pending, (state) => {
+        state.status = 'loading';
+        return state;
+      })
+      .addCase(
+        getAllProfilesAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(
+        getAllProfilesAsync.fulfilled,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            profiles: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(getGithubReposAsync.pending, (state) => {
+        state.status = 'loading';
+        return state;
+      })
+      .addCase(
+        getGithubReposAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(getGithubReposAsync.fulfilled, (state, action) => {
+        return {
+          ...state,
+          repos: action.payload,
           status: 'success',
           loading: false
         };
