@@ -3,13 +3,15 @@ import counterReducer from '../features/counter/counterSlice';
 import alertReducer from '../features/alert/alertSlice';
 import authReducer from '../features/auth/authSlice';
 import profileReducer from '../features/profile/profileSlice';
+import postReducer from '../features/post/postSlice';
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
     alert: alertReducer,
     auth: authReducer,
-    profile: profileReducer
+    profile: profileReducer,
+    post: postReducer
   }
 });
 

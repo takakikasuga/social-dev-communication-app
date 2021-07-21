@@ -113,6 +113,8 @@ export const getCurrentProfileAsync = createAsyncThunk<
 
     return response.data;
   } catch (err: any) {
+    // エラーハンドリング
+    dispatch(clearProfile());
     const response = err.response;
     console.log('rejectWithValue/response', response);
     const errors = response.data.errors as { msg: string }[];
@@ -490,6 +492,7 @@ export const profileSlice = createSlice({
         (state, action: PayloadAction<any>) => {
           return {
             ...state,
+            profile: null,
             error: action.payload,
             status: 'success',
             loading: false
@@ -513,6 +516,7 @@ export const profileSlice = createSlice({
         (state, action: PayloadAction<any>) => {
           return {
             ...state,
+            profile: null,
             error: action.payload,
             status: 'success',
             loading: false

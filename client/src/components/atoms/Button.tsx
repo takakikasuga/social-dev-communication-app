@@ -1,7 +1,7 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 
 interface ButtonProps {
-  children: string;
+  children: string | ReactNode;
   buttonColor: string;
   textColor:
     | 'text-primary'

@@ -46,6 +46,7 @@ const Navbar: FC = () => {
     return (
       <div className={classes.sectionDesktop}>
         <Link to='/profiles'>開発者</Link>
+        <Link to='/posts'>投稿</Link>
         <Link to='/dashboard'>
           <IconButton aria-label='show 17 new notifications' color='inherit'>
             <i className='fas fa-user' style={{ color: '#fff' }} />{' '}

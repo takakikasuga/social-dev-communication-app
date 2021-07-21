@@ -8,6 +8,7 @@ import { ProfileTop } from './index';
 import { ProfileAbout } from './index';
 import { ProfileExperience } from './index';
 import { ProfileEducation } from './index';
+import { ProfileGithub } from './index';
 
 // スライサー
 import {
@@ -81,6 +82,9 @@ const Profile: FC = () => {
                 <h4>教育、学歴が追加されていません。</h4>
               )}
             </div>
+            {profile.profile.githubusername ? (
+              <ProfileGithub username={profile.profile.githubusername} />
+            ) : null}
           </div>
         </Fragment>
       )}
