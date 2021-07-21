@@ -1,34 +1,40 @@
 import React, { FC, Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 
 // コンポーネント
-import { InputEmail } from '../atoms/index';
-import { InputPassword } from '../atoms/index';
+import { InputValidation } from '../atoms/index';
 import { Button } from '../atoms/index';
 
+// スライサー
+import { loginUserAsync, authStatus } from '../../features/auth/authSlice';
+
 export interface LoginInputValue {
-  name: string;
   email: string;
   password: string;
-  confirmPassword: string;
 }
 
 const Login: FC = () => {
+  const dispatch = useDispatch();
+  const auth = useSelector(authStatus);
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<LoginInputValue>({
     mode: 'onBlur',
-    defaultValues: { name: '', email: '', password: '', confirmPassword: '' }
+    defaultValues: { email: '', password: '' }
   });
 
   const onSubmit: SubmitHandler<LoginInputValue> = (formData) => {
     console.log('通過しました。');
     console.log('formData', formData);
+    dispatch(loginUserAsync(formData));
   };
 
+  // ログイン状態であった場合はリダイレクトする
+  if (auth.isAuthenticated) return <Redirect to='/dashboard' />;
   return (
     <Fragment>
       <h1 className='text-primary'>Sign In</h1>
@@ -37,15 +43,22 @@ const Login: FC = () => {
       </p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className='mb-3'>
-          <InputEmail
+          <InputValidation
+            id='email'
+            inputType='text'
+            placeholder='Email'
             error={errors.email!}
             register={register('email', {
               required: 'メールアドレスを入力してください'
-            })}
-          />
+            })}>
+            Email address
+          </InputValidation>
         </div>
         <div className='mb-3'>
-          <InputPassword
+          <InputValidation
+            id='password'
+            inputType='password'
+            placeholder='Email'
             error={errors.password!}
             register={register('password', {
               required: 'パスワードを入力してください',
@@ -53,8 +66,9 @@ const Login: FC = () => {
                 value: 6,
                 message: 'パスワードは最低６文字以上にしてください。'
               }
-            })}
-          />
+            })}>
+            Password
+          </InputValidation>
         </div>
         <Button type='submit' buttonColor='primary' textColor='text-white'>
           ログイン

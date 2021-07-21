@@ -17,6 +17,7 @@ const InputEmail: FC<InputEmailProps> = ({ register, error }) => {
         Email address
       </label>
       <input
+        autoComplete='on'
         {...register}
         placeholder='Email'
         type='email'
@@ -25,9 +26,6 @@ const InputEmail: FC<InputEmailProps> = ({ register, error }) => {
         aria-describedby='emailHelp'
       />
       {error && <ErrorParagraph>{error.message}</ErrorParagraph>}
-      <div id='emailHelp' className='form-text'>
-        We'll never share your email with anyone else.
-      </div>
     </Fragment>
   );
 };

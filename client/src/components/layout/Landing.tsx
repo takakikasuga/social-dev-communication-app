@@ -1,5 +1,10 @@
 import React, { FC, Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+
+import { useSelector } from 'react-redux';
+
+// スライサー
+import { authStatus } from '../../features/auth/authSlice';
 
 // コンポーネント
 import { Button } from '../atoms/index';
@@ -9,6 +14,11 @@ import { Title, SubText } from '../../styles/title';
 import { BackgroundDiv, Box } from '../../styles/landing';
 
 const Landing: FC = () => {
+  const auth = useSelector(authStatus);
+
+  if (auth.isAuthenticated) {
+    return <Redirect to='/dashboard' />;
+  }
   return (
     <Fragment>
       <BackgroundDiv>

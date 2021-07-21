@@ -1,5 +1,5 @@
-export function fetchCount(amount = 1) {
-  return new Promise<{ data: number }>((resolve) =>
-    setTimeout(() => resolve({ data: amount }), 500)
+export function removeAlertAPI(id: string, timeout?: number) {
+  return new Promise<{ id: string }>((resolve) =>
+    setTimeout(() => resolve({ id: id }), timeout)
   );
 }

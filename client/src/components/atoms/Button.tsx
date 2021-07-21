@@ -1,7 +1,7 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 
 interface ButtonProps {
-  children: string;
+  children: string | ReactNode;
   buttonColor: string;
   textColor:
     | 'text-primary'
@@ -11,16 +11,29 @@ interface ButtonProps {
     | 'text-white'
     | 'text-dark';
   type: 'button' | 'submit' | 'reset' | undefined;
+  toggleFunc?: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleValue?: boolean;
 }
 
 const Button: FC<ButtonProps> = ({
   children,
   buttonColor,
   type,
-  textColor
+  textColor,
+  toggleFunc,
+  toggleValue
 }) => {
   return (
-    <button type={type} className={`btn btn-${buttonColor} ${textColor}`}>
+    <button
+      type={type}
+      className={`btn btn-${buttonColor} ${textColor} my-3`}
+      onClick={
+        toggleFunc
+          ? () => {
+              toggleFunc(!toggleValue!);
+            }
+          : () => {}
+      }>
       {children}
     </button>
   );

@@ -1,25 +1,38 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useEffect } from 'react';
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 // components
 import { Navbar } from './components/layout/index';
 import { Landing } from './components/layout/index';
-import { Login } from './components/auth/index';
-import { Register } from './components/auth/index';
+import { Routes } from './components/routing/index';
+
+// スライス
+import { loadUserAsync } from './features/auth/authSlice';
+
+// ユーティリティ
+import { setAuthToken } from './utils/index';
+
+// ローディングした時にtokenを持っていた場合にheadersにセットする
+if (localStorage.token) {
+  // tokenをheadersにセットする
+  setAuthToken(localStorage.token);
+}
 
 const App: FC = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(loadUserAsync({}));
+  }, [dispatch]);
   return (
     <Router>
       <Fragment>
         <Navbar></Navbar>
-        <Route exact path='/' component={Landing}></Route>
-        <section className='container'>
-          <Switch>
-            <Route exact path='/register' component={Register}></Route>
-            <Route exact path='/login' component={Login}></Route>
-          </Switch>
-        </section>
+        <Switch>
+          <Route exact path='/' component={Landing}></Route>
+          <Route component={Routes} />
+        </Switch>
       </Fragment>
     </Router>
   );

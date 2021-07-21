@@ -17,6 +17,7 @@ const InputPassword: FC<InputPasswordProps> = ({ register, error }) => {
         Password
       </label>
       <input
+        autoComplete='on'
         {...register}
         placeholder='Password'
         type='password'

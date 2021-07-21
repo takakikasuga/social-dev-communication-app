@@ -9,7 +9,6 @@ const { body } = require('express-validator');
 //@desc      Get users current profile
 //@access    Private
 router
-
   .route('/me')
   .get(
     authMiddleware.secureRouteValidateJsonWebToken,
