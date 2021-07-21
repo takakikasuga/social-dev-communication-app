@@ -10,7 +10,8 @@ import {
   getAllPosts,
   addLikePost,
   removeLikePost,
-  deletePost
+  deletePost,
+  addPost
 } from './postAPI';
 import { setAlert, removeAlertAsync } from '../alert/alertSlice';
 
@@ -20,8 +21,8 @@ export interface GetPostState {
   name: string;
   avatar: string;
   user: string;
-  likes: any[] | [];
-  comments: any[] | [];
+  likes: { _id: string; user: string }[] | [];
+  comments: { _id: string; user: string }[] | [];
   date: Date;
   __v?: string;
 }
@@ -137,9 +138,49 @@ export const deletePostAsync = createAsyncThunk<string, string, ThunkConfig>(
       const response = await deletePost(postId);
       console.log('deletePostAsync/response', response);
       const id = v4();
-      dispatch(setAlert({ message: 'Post Deleted', alertType: 'success', id }));
+      dispatch(
+        setAlert({ message: response.data.msg, alertType: 'success', id })
+      );
       dispatch(removeAlertAsync({ id, timeout: 3000 }));
       return postId;
+    } catch (err: any) {
+      const response = err.response;
+      console.log('rejectWithValue/response', response);
+      const id = v4();
+      dispatch(
+        setAlert({ message: response.data.msg, alertType: 'danger', id })
+      );
+      dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      return rejectWithValue({
+        status: response.status,
+        message: response.data.msg
+      });
+    }
+  }
+);
+
+interface AddPostResponse {
+  _id: string;
+  text: string;
+  name: string;
+  avatar: string;
+  user: string;
+  likes: { _id: string; user: string }[] | [];
+  comments: { _id: string; user: string } | [];
+  date: Date;
+  __v?: number;
+}
+
+export const addPostAsync = createAsyncThunk<AddPostResponse, any, ThunkConfig>(
+  'post/addPost',
+  async (formData, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await addPost(formData);
+      console.log('addPostAsync/response', response);
+      const id = v4();
+      dispatch(setAlert({ message: 'Post Created', alertType: 'success', id }));
+      dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      return response.data;
     } catch (err: any) {
       const response = err.response;
       console.log('rejectWithValue/response', response);
@@ -306,7 +347,30 @@ export const postSlice = createSlice({
             loading: false
           };
         }
-      );
+      )
+      .addCase(addPostAsync.pending, (state) => {
+        return {
+          ...state,
+          status: 'loading',
+          loading: false
+        };
+      })
+      .addCase(addPostAsync.rejected, (state, action: PayloadAction<any>) => {
+        return {
+          ...state,
+          error: action.payload,
+          status: 'failed',
+          loading: false
+        };
+      })
+      .addCase(addPostAsync.fulfilled, (state, action: PayloadAction<any>) => {
+        return {
+          ...state,
+          posts: [action.payload, ...state.posts],
+          status: 'success',
+          loading: false
+        };
+      });
   }
 });
 

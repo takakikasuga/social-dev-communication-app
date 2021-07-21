@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // コンポーネント
 import { Spinner } from '../layout/index';
-import { PostItem } from '../posts/index';
+import { PostItem, PostForm } from '../posts/index';
 
 // スライサー
 import { getAllPostsAsync, postStatus } from '../../features/post/postSlice';
@@ -23,6 +23,7 @@ const Posts: FC = () => {
       <p>
         <i className='fas fa-user' /> ようこそ 技術ナレッジコミュニティへ
       </p>
+      <PostForm />
       <div>
         {post.posts.map((post) => {
           return <PostItem key={post._id} post={post} />;

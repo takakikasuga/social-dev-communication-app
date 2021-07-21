@@ -15,3 +15,12 @@ export const removeLikePost = (postId: string) => {
 export const deletePost = (postId: string) => {
   return axios.delete(`/api/posts/${postId}`);
 };
+
+export const addPost = (formData: any) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  return axios.post('/api/posts', formData, config);
+};

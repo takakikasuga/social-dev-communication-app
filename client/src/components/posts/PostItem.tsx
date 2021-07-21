@@ -29,7 +29,7 @@ const PostItem: FC<PostItemeProps> = ({
   return (
     <div>
       <div>
-        <Link to='' target='_blank' rel='noopener noreferrer'>
+        <Link to={`/profile/${user}`}>
           <RoundImage src={avatar} alt='avatar' />
           <h4>{name}</h4>
         </Link>
