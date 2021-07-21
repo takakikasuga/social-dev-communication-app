@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
 
-// コンポーネント
-import { Button } from '../../components/atoms/index';
-
 // スライサー
 import { authStatus } from '../../features/auth/authSlice';
-import { addLikeAsync, removeLikeAsync } from '../../features/post/postSlice';
+import {
+  addLikeAsync,
+  removeLikeAsync,
+  deletePostAsync
+} from '../../features/post/postSlice';
 
 // スタイル
 import { RoundImage } from '../../styles/index';
@@ -60,9 +61,14 @@ const PostItem: FC<PostItemeProps> = ({
           会話 <span>{comments.length}</span>
         </Link>
         {!auth.loading && user === auth.user?._id ? (
-          <Button type='button' buttonColor='danger' textColor='text-white'>
+          <button
+            onClick={() => {
+              dispatch(deletePostAsync(_id));
+            }}
+            type='button'
+            className='btn btn-danger text-white'>
             <i className='fas fa-times'></i>
-          </Button>
+          </button>
         ) : null}
       </div>
     </div>

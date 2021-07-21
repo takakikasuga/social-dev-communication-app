@@ -6,7 +6,12 @@ import {
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { v4 } from 'uuid';
-import { getAllPosts, addLikePost, removeLikePost } from './postAPI';
+import {
+  getAllPosts,
+  addLikePost,
+  removeLikePost,
+  deletePost
+} from './postAPI';
 import { setAlert, removeAlertAsync } from '../alert/alertSlice';
 
 export interface GetPostState {
@@ -125,6 +130,32 @@ export const removeLikeAsync = createAsyncThunk<
   }
 });
 
+export const deletePostAsync = createAsyncThunk<string, string, ThunkConfig>(
+  'post/deletePost',
+  async (postId, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await deletePost(postId);
+      console.log('deletePostAsync/response', response);
+      const id = v4();
+      dispatch(setAlert({ message: 'Post Deleted', alertType: 'success', id }));
+      dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      return postId;
+    } catch (err: any) {
+      const response = err.response;
+      console.log('rejectWithValue/response', response);
+      const id = v4();
+      dispatch(
+        setAlert({ message: response.data.msg, alertType: 'danger', id })
+      );
+      dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      return rejectWithValue({
+        status: response.status,
+        message: response.data.msg
+      });
+    }
+  }
+);
+
 export const postSlice = createSlice({
   name: 'post',
   initialState,
@@ -242,6 +273,35 @@ export const postSlice = createSlice({
                 ? { ...post, likes: action.payload.likes }
                 : post
             ),
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(deletePostAsync.pending, (state) => {
+        return {
+          ...state,
+          status: 'loading',
+          loading: false
+        };
+      })
+      .addCase(
+        deletePostAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'failed',
+            loading: false
+          };
+        }
+      )
+      .addCase(
+        deletePostAsync.fulfilled,
+        (state, action: PayloadAction<string>) => {
+          return {
+            ...state,
+            posts: state.posts.filter((post) => post._id !== action.payload),
             status: 'success',
             loading: false
           };
