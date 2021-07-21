@@ -8,6 +8,7 @@ import { getPostAsync, postStatus } from '../../features/post/postSlice';
 // コンポーネント
 import { Spinner } from '../layout/index';
 import { PostItem } from '../posts/index';
+import { CommentForm, CommentItem } from './index';
 
 const Post: FC = () => {
   const dispatch = useDispatch();
@@ -25,6 +26,29 @@ const Post: FC = () => {
         投稿一覧へ
       </Link>
       <PostItem post={post.post} showActions={false} />
+      <CommentForm postId={post.post._id} />
+      <div>
+        {post.post && post.post.comments.length > 0
+          ? (
+              post.post.comments as {
+                _id: string;
+                user: string;
+                text: string;
+                name: string;
+                avatar: string;
+                date: Date;
+              }[]
+            ).map((comment) => {
+              return (
+                <CommentItem
+                  key={comment._id}
+                  comment={comment}
+                  postId={post.post!._id}
+                />
+              );
+            })
+          : null}
+      </div>
     </Fragment>
   );
 };

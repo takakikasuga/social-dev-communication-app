@@ -12,7 +12,9 @@ import {
   removeLikePost,
   deletePost,
   addPost,
-  getPost
+  getPost,
+  addComment,
+  deleteComment
 } from './postAPI';
 import { setAlert, removeAlertAsync } from '../alert/alertSlice';
 
@@ -23,7 +25,16 @@ export interface GetPostState {
   avatar: string;
   user: string;
   likes: { _id: string; user: string }[] | [];
-  comments: { _id: string; user: string }[] | [];
+  comments:
+    | {
+        _id: string;
+        user: string;
+        text: string;
+        name: string;
+        avatar: string;
+        date: Date;
+      }[]
+    | [];
   date: Date;
   __v?: string;
 }
@@ -204,6 +215,78 @@ export const getPostAsync = createAsyncThunk<GetPostState, string, ThunkConfig>(
           dispatch(removeAlertAsync({ id, timeout: 3000 }));
         });
       }
+      return rejectWithValue({
+        status: response.status,
+        message: response.data.msg
+      });
+    }
+  }
+);
+
+interface AddCommentResponse {
+  _id: string;
+  user: string;
+  text: string;
+  name: string;
+  avatar: string;
+  date: Date;
+}
+export const addCommentAsync = createAsyncThunk<
+  AddCommentResponse[],
+  { postId: string; formData: { text: string } },
+  ThunkConfig
+>(
+  'post/addComment',
+  async ({ postId, formData }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await addComment(postId, formData);
+      console.log('addPostAsync/response', response);
+      const id = v4();
+      dispatch(
+        setAlert({ message: 'Comment Added', alertType: 'success', id })
+      );
+      dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      return response.data;
+    } catch (err: any) {
+      const response = err.response;
+      console.log('rejectWithValue/response', response);
+      const id = v4();
+      dispatch(
+        setAlert({ message: response.data.msg, alertType: 'danger', id })
+      );
+      dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      return rejectWithValue({
+        status: response.status,
+        message: response.data.msg
+      });
+    }
+  }
+);
+
+export const deleteCommentAsync = createAsyncThunk<
+  string,
+  { postId: string; commentId: string },
+  ThunkConfig
+>(
+  'post/deleteComment',
+  async ({ postId, commentId }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await deleteComment(postId, commentId);
+      console.log('addPostAsync/response', response);
+      const id = v4();
+      dispatch(
+        setAlert({ message: 'Comment Deleted', alertType: 'success', id })
+      );
+      dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      return commentId;
+    } catch (err: any) {
+      const response = err.response;
+      console.log('rejectWithValue/response', response);
+      const id = v4();
+      dispatch(
+        setAlert({ message: response.data.msg, alertType: 'danger', id })
+      );
+      dispatch(removeAlertAsync({ id, timeout: 3000 }));
       return rejectWithValue({
         status: response.status,
         message: response.data.msg
@@ -410,6 +493,69 @@ export const postSlice = createSlice({
           return {
             ...state,
             post: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(addCommentAsync.pending, (state) => {
+        return {
+          ...state,
+          status: 'loading',
+          loading: false
+        };
+      })
+      .addCase(
+        addCommentAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'failed',
+            loading: false
+          };
+        }
+      )
+      .addCase(
+        addCommentAsync.fulfilled,
+        (state, action: PayloadAction<AddCommentResponse[]>) => {
+          return {
+            ...state,
+            post: { ...state.post!, comments: action.payload },
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(deleteCommentAsync.pending, (state) => {
+        return {
+          ...state,
+          status: 'loading',
+          loading: false
+        };
+      })
+      .addCase(
+        deleteCommentAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'failed',
+            loading: false
+          };
+        }
+      )
+      .addCase(
+        deleteCommentAsync.fulfilled,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            post: {
+              ...state.post!,
+              comments: state.post!.comments.filter(
+                (comment) => comment._id !== action.payload
+              )
+            },
             status: 'success',
             loading: false
           };

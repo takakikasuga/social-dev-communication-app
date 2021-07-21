@@ -28,3 +28,16 @@ export const addPost = (formData: { text: string }) => {
 export const getPost = (postId: string) => {
   return axios.get(`/api/posts/${postId}`);
 };
+
+export const addComment = (postId: string, formData: { text: string }) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  return axios.post(`/api/posts/comment/${postId}`, formData, config);
+};
+
+export const deleteComment = (postId: string, commentId: string) => {
+  return axios.delete(`/api/posts/comment/${postId}/${commentId}`);
+};
