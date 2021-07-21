@@ -15,7 +15,6 @@ interface AddPostValue {
 const PostForm: FC = () => {
   const dispatch = useDispatch();
   const {
-    watch,
     reset,
     register,
     handleSubmit,

@@ -19,9 +19,6 @@ const Experience: FC = () => {
     (exp, index: number) => {
       return (
         <tr key={exp._id}>
-          <th style={{ verticalAlign: 'middle' }} scope='row'>
-            {index + 1}
-          </th>
           <TableData>{exp.company}</TableData>
           <TableData> {exp.title}</TableData>
           <TableData>
@@ -48,7 +45,6 @@ const Experience: FC = () => {
       <table className='table table-striped table-hover'>
         <thead>
           <tr>
-            <th scope='col'>Number</th>
             <th scope='col'>Company</th>
             <th scope='col'>Title</th>
             <th scope='col'>Years</th>

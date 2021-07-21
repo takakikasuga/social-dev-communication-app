@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useState } from 'react';
 
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,28 +11,37 @@ import { clearProfile } from '../../features/profile/profileSlice';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import Drawer from '@material-ui/core/Drawer';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    grow: {
+    root: {
       flexGrow: 1
     },
     menuButton: {
-      marginRight: theme.spacing(2)
-    },
-    title: {
+      marginRight: theme.spacing(2),
       display: 'none',
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.down('xs')]: {
         display: 'block'
       }
     },
-    sectionDesktop: {
-      display: 'none',
-      [theme.breakpoints.up('md')]: {
-        display: 'flex'
+    deskTopMenu: {
+      display: 'block',
+      [theme.breakpoints.down('xs')]: {
+        display: 'none'
       }
+    },
+    title: {
+      flexGrow: 1
+    },
+    linkStyle: {
+      textDecoration: 'none',
+      width: '150px',
+      display: 'block'
     }
   })
 );
@@ -42,78 +51,96 @@ const Navbar: FC = () => {
   const dispatch = useDispatch();
   const auth = useSelector(authStatus);
 
+  const [state, setState] = useState<boolean>(false);
+
+  const toggleDrawer =
+    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
+      ) {
+        return;
+      }
+
+      setState(open);
+    };
+
   const AuthLinks = () => {
     return (
-      <div className={classes.sectionDesktop}>
-        <Link to='/profiles'>開発者</Link>
-        <Link to='/posts'>投稿</Link>
-        <Link to='/dashboard'>
-          <IconButton aria-label='show 17 new notifications' color='inherit'>
-            <i className='fas fa-user' style={{ color: '#fff' }} />{' '}
-            <span className='text-dark'>ダッシュボード</span>
-          </IconButton>
+      <div>
+        <Link
+          to='/profiles'
+          className={
+            classes.linkStyle +
+            ' ' +
+            'bg-primary text-white text-center p-3 border border-white'
+          }>
+          開発者
+        </Link>
+
+        <Link
+          className={
+            classes.linkStyle +
+            ' ' +
+            'bg-primary text-white text-center p-3 border border-white'
+          }
+          to='/posts'>
+          投稿
+        </Link>
+        <Link
+          className={
+            classes.linkStyle +
+            ' ' +
+            'bg-primary text-white text-center p-3 border border-white'
+          }
+          to='/dashboard'>
+          ダッシュボード
         </Link>
         <a
+          className={
+            classes.linkStyle +
+            ' ' +
+            'bg-primary text-white text-center p-3 border border-white'
+          }
           href='#!'
           onClick={() => {
             dispatch(logout());
             dispatch(clearProfile());
           }}>
-          <IconButton aria-label='show 42 new mails'>
-            <i className='fas fa-sign-out-alt' style={{ color: '#fff' }} />
-            {'  '}
-            <span className='text-dark'>ログアウト</span>
-          </IconButton>
+          ログアウト
         </a>
       </div>
     );
   };
   const GuestLinks = () => {
-    return (
-      <div className={classes.sectionDesktop}>
-        <Link to='/profiles'>開発者</Link>
-        <Link to='/register'>
-          <IconButton aria-label='show 17 new notifications' color='inherit'>
-            <i className='fas fa-user-plus' style={{ color: '#fff' }} />
-          </IconButton>
-        </Link>
-        <Link to='/login'>
-          <IconButton aria-label='show 4 new mails' color='inherit'>
-            <i className='fas fa-sign-in-alt' style={{ color: '#fff' }} />
-          </IconButton>
-        </Link>
-      </div>
-    );
+    return <div className={classes.root}></div>;
   };
 
   return (
-    <div className={classes.grow}>
+    <div className={classes.root}>
       <AppBar position='static'>
         <Toolbar>
-          <Link to='/' style={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              edge='start'
-              className={classes.menuButton}
-              color='inherit'
-              aria-label='open drawer'>
-              <i className='fas fa-code' style={{ color: '#fff' }} />
-            </IconButton>
-            <Typography
-              className={classes.title}
-              variant='h6'
-              noWrap
-              style={{ color: '#fff' }}>
-              Developer Sns
-            </Typography>
-          </Link>
-          <div className={classes.grow} />
-          <Fragment>
-            {!auth.loading && auth.isAuthenticated ? (
-              <AuthLinks />
-            ) : (
-              <GuestLinks />
-            )}
-          </Fragment>
+          <Typography variant='h6' className={classes.title}>
+            News
+          </Typography>
+          <div className={classes.deskTopMenu}>
+            <Button color='inherit'>Login</Button>
+          </div>
+          <IconButton className={classes.menuButton} color='inherit'>
+            <MenuIcon onClick={toggleDrawer(true)} />
+          </IconButton>
+          <Drawer anchor='right' open={state} onClose={toggleDrawer(false)}>
+            {
+              <Fragment>
+                {!auth.loading && auth.isAuthenticated ? (
+                  <AuthLinks />
+                ) : (
+                  <GuestLinks />
+                )}
+              </Fragment>
+            }
+          </Drawer>
         </Toolbar>
       </AppBar>
     </div>
@@ -121,3 +148,20 @@ const Navbar: FC = () => {
 };
 
 export default Navbar;
+
+// <Link to='/' style={{ display: 'flex', alignItems: 'center' }}>
+//   <IconButton
+//     edge='start'
+//     className={classes.menuButton}
+//     color='inherit'
+//     aria-label='open drawer'>
+//     <i className='fas fa-code' style={{ color: '#fff' }} />
+//   </IconButton>
+//   <Typography
+//     className={classes.title}
+//     variant='h6'
+//     noWrap
+//     style={{ color: '#fff' }}>
+//     Developer Sns
+//   </Typography>
+//   </Link>

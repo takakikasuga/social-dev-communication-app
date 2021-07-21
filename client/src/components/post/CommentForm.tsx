@@ -46,7 +46,7 @@ const CommentForm: FC<{ postId: string }> = ({ postId }) => {
           投稿内容
         </TextareaValidation>
         <Button type='submit' buttonColor='primary' textColor='text-white'>
-          Submit
+          投稿
         </Button>
       </form>
     </div>

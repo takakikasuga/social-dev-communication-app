@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 
 import {
-  RoundImage,
+  RoundImageProfile,
   DeveloperLists,
   ImageTextLayout,
   SkillLists
@@ -20,7 +20,7 @@ const ProfileItem: FC<any> = ({
   return (
     <DeveloperLists className='p-5 mb-3'>
       <ImageTextLayout>
-        <RoundImage src={avatar} alt='アバター' />
+        <RoundImageProfile src={avatar} alt='アバター' />
         <div>
           <h2 className='fs-2'>{name}</h2>
           <p className='fs-4'>

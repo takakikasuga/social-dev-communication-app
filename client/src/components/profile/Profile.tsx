@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useEffect } from 'react';
+import React, { FC, Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
 
@@ -29,19 +29,20 @@ const Profile: FC = () => {
       dispatch(getProfileByIdAsync(profile_id));
     }
   }, [dispatch, profile_id]);
+
   return (
     <Fragment>
       {profile.profile === null || profile.loading ? (
         <Spinner />
       ) : (
         <Fragment>
-          <Link to='/profiles' className='btn btn-primary p-2'>
+          <Link to='/profiles' className='btn btn-primary p-2 my-3 me-3'>
             プロフィール一覧へ
           </Link>
           {auth.isAuthenticated &&
           auth.loading === false &&
           auth.user?._id === profile.profile.user._id ? (
-            <Link to='/edit-profile' className='btn btn-light p-2'>
+            <Link to='/edit-profile' className='btn btn-light p-2 my-3'>
               プロフィール編集へ
             </Link>
           ) : null}

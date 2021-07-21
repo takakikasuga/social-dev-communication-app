@@ -18,9 +18,6 @@ const Education: FC = () => {
   const TableDataEdu = profile.profile?.education?.map((edu, index: number) => {
     return (
       <tr key={edu._id}>
-        <th style={{ verticalAlign: 'middle' }} scope='row'>
-          {index + 1}
-        </th>
         <TableData>{edu.school}</TableData>
         <TableData> {edu.degree}</TableData>
         <TableData>
@@ -46,7 +43,6 @@ const Education: FC = () => {
       <table className='table table-striped table-hover'>
         <thead>
           <tr>
-            <th scope='col'>Number</th>
             <th scope='col'>School</th>
             <th scope='col'>Degree</th>
             <th scope='col'>Years</th>

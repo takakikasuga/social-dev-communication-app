@@ -26,7 +26,7 @@ const Button: FC<ButtonProps> = ({
   return (
     <button
       type={type}
-      className={`btn btn-${buttonColor} ${textColor}`}
+      className={`btn btn-${buttonColor} ${textColor} my-3`}
       onClick={
         toggleFunc
           ? () => {

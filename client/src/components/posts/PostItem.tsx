@@ -12,7 +12,7 @@ import {
 } from '../../features/post/postSlice';
 
 // スタイル
-import { RoundImage } from '../../styles/index';
+import { RoundImage, PostContainer } from '../../styles/index';
 
 // 型
 import { GetPostState } from '../../features/post/postSlice';
@@ -29,17 +29,17 @@ const PostItem: FC<PostItemeProps> = ({
   const dispatch = useDispatch();
   const auth = useSelector(authStatus);
   return (
-    <div>
+    <PostContainer>
       <div>
         <Link to={`/profile/${user}`}>
           <RoundImage src={avatar} alt='avatar' />
-          <h4>{name}</h4>
+          <h4 style={{ textAlign: 'center' }}>{name}</h4>
         </Link>
       </div>
       <div>
-        <p>{text}</p>
+        <p style={{ wordBreak: 'break-all' }}>{text}</p>
         <p>
-          Posted on <Moment format='YYYY/MM/DD'>{date}</Moment>
+          投稿日: <Moment format='YYYY/MM/DD'>{date}</Moment>
         </p>
         {showActions ? (
           <Fragment>
@@ -61,7 +61,7 @@ const PostItem: FC<PostItemeProps> = ({
               <i className='fas fa-thumbs-down'></i>
             </button>
 
-            <Link to={`/posts/${_id}`}>
+            <Link to={`/posts/${_id}`} className='btn btn-success'>
               会話 <span>{comments.length}</span>
             </Link>
             {!auth.loading && user === auth.user?._id ? (
@@ -77,7 +77,7 @@ const PostItem: FC<PostItemeProps> = ({
           </Fragment>
         ) : null}
       </div>
-    </div>
+    </PostContainer>
   );
 };
 

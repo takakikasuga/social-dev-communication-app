@@ -26,7 +26,6 @@ const Profiles: FC = () => {
   const offset = currentPage * PER_PAGE;
   const pageCount = Math.ceil(profile.profiles.length / PER_PAGE);
   const handlePageClick = ({ selected }: { selected: number }) => {
-    console.log('selected', selected);
     setCurrentPage(selected);
   };
   useEffect(() => {

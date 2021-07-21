@@ -1,6 +1,6 @@
 .pagination {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   list-style: none;
   cursor: pointer;
 }
@@ -8,8 +8,8 @@
 .pagination a {
   padding: 10px;
   border-radius: 5px;
-  border: 1px solid #6c7ac9;
-  color: #6c7ac9;
+  border: 1px solid #000;
+  color: #000;
 }
 
 .pagination__link {
@@ -17,8 +17,8 @@
 }
 
 .pagination__link--active a {
-  color: #fff;
-  background: #6c7ac9;
+  background: #000;
+  color: #fff !important;
 }
 
 .pagination__link--disabled a {

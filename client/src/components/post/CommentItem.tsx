@@ -8,7 +8,7 @@ import { authStatus } from '../../features/auth/authSlice';
 import { deleteCommentAsync } from '../../features/post/postSlice';
 
 // スタイル
-import { RoundImage } from '../../styles/index';
+import { RoundImage, CommentContainer } from '../../styles/index';
 
 interface CommentItemProps {
   postId: string;
@@ -30,7 +30,7 @@ const CommentItem: FC<CommentItemProps> = ({
   const auth = useSelector(authStatus);
   return (
     <Fragment>
-      <div>
+      <CommentContainer>
         <div>
           <Link to={`/profile/${user}`}>
             <RoundImage src={avatar} alt='アバター' />
@@ -40,20 +40,22 @@ const CommentItem: FC<CommentItemProps> = ({
         <div>
           <p>{text}</p>
         </div>
-        <p>
-          投稿日: <Moment format='YYYY/MM/DD'>{date}</Moment>
-        </p>
-        {!auth.loading && user === auth.user?._id ? (
-          <button
-            type='button'
-            className='btn btn-danger text-white'
-            onClick={() => {
-              dispatch(deleteCommentAsync({ postId, commentId: _id }));
-            }}>
-            <i className='fas fa-times'></i>
-          </button>
-        ) : null}
-      </div>
+        <div style={{ textAlign: 'center' }}>
+          <p>
+            投稿日: <Moment format='YYYY/MM/DD'>{date}</Moment>
+          </p>
+          {!auth.loading && user === auth.user?._id ? (
+            <button
+              type='button'
+              className='btn btn-danger text-white'
+              onClick={() => {
+                dispatch(deleteCommentAsync({ postId, commentId: _id }));
+              }}>
+              <i className='fas fa-times'></i>
+            </button>
+          ) : null}
+        </div>
+      </CommentContainer>
     </Fragment>
   );
 };
