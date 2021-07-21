@@ -40,7 +40,7 @@ const Profiles: FC = () => {
 
   return (
     <Fragment>
-      {profile.loading ? (
+      {profile.loading || profile.profiles.length === 0 ? (
         <Spinner />
       ) : (
         <Fragment>

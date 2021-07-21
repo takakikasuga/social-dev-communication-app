@@ -3,6 +3,9 @@ import React, { FC, Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
+// コンポーネント
+import { DrawerLinks } from './index';
+
 // スライサー
 import { logout, authStatus } from '../../features/auth/authSlice';
 import { clearProfile } from '../../features/profile/profileSlice';
@@ -11,8 +14,6 @@ import { clearProfile } from '../../features/profile/profileSlice';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Drawer from '@material-ui/core/Drawer';
@@ -36,7 +37,19 @@ const useStyles = makeStyles((theme: Theme) =>
       }
     },
     title: {
-      flexGrow: 1
+      flexGrow: 1,
+      color: '#fff',
+      textDecoration: 'none',
+      fontSize: '24px',
+      '&:link': {
+        color: '#fff'
+      },
+      '&:visited': {
+        color: '#fff'
+      },
+      '&:active': {
+        color: '#fff'
+      }
     },
     linkStyle: {
       textDecoration: 'none',
@@ -66,37 +79,53 @@ const Navbar: FC = () => {
       setState(open);
     };
 
-  const AuthLinks = () => {
+  const GuestLinks: FC = () => {
     return (
       <div>
-        <Link
-          to='/profiles'
-          className={
-            classes.linkStyle +
-            ' ' +
-            'bg-primary text-white text-center p-3 border border-white'
-          }>
+        <Link className='p-3 text-decoration-none text-white' to='/profiles'>
           開発者
         </Link>
+        <Link className='p-3 text-decoration-none text-white' to='/register'>
+          新規登録
+        </Link>
+        <Link className='p-3 text-decoration-none text-white' to='/login'>
+          ログイン
+        </Link>
+      </div>
+    );
+  };
 
-        <Link
-          className={
-            classes.linkStyle +
-            ' ' +
-            'bg-primary text-white text-center p-3 border border-white'
-          }
-          to='/posts'>
+  const AuthLinks: FC = () => {
+    return (
+      <div style={{ color: '#fff' }}>
+        <Link className='p-3 text-decoration-none text-white' to='/profiles'>
+          開発者
+        </Link>
+        <Link className='p-3 text-decoration-none text-white' to='/posts'>
           投稿
         </Link>
-        <Link
-          className={
-            classes.linkStyle +
-            ' ' +
-            'bg-primary text-white text-center p-3 border border-white'
-          }
-          to='/dashboard'>
+        <Link className='p-3 text-decoration-none text-white' to='/dashboard'>
           ダッシュボード
         </Link>
+        <a
+          className='p-3 text-decoration-none text-white'
+          href='#!'
+          onClick={() => {
+            dispatch(logout());
+            dispatch(clearProfile());
+          }}>
+          ログアウト
+        </a>
+      </div>
+    );
+  };
+
+  const DrawerAuthLinks: FC = () => {
+    return (
+      <div>
+        <DrawerLinks spaRoute='profiles'>開発者</DrawerLinks>
+        <DrawerLinks spaRoute='posts'>投稿</DrawerLinks>
+        <DrawerLinks spaRoute='dashboard'>ダッシュボード</DrawerLinks>
         <a
           className={
             classes.linkStyle +
@@ -113,30 +142,43 @@ const Navbar: FC = () => {
       </div>
     );
   };
-  const GuestLinks = () => {
-    return <div className={classes.root}></div>;
+
+  const DrawerGuestLinks: FC = () => {
+    return (
+      <div>
+        <DrawerLinks spaRoute='profiles'>開発者</DrawerLinks>
+        <DrawerLinks spaRoute='register'>新規登録</DrawerLinks>
+        <DrawerLinks spaRoute='login'>ログイン</DrawerLinks>
+      </div>
+    );
   };
 
   return (
     <div className={classes.root}>
       <AppBar position='static'>
         <Toolbar>
-          <Typography variant='h6' className={classes.title}>
-            News
-          </Typography>
+          <Link to='/' className={classes.title}>
+            DevNet
+          </Link>
           <div className={classes.deskTopMenu}>
-            <Button color='inherit'>Login</Button>
+            {!auth.loading && auth.isAuthenticated ? (
+              <AuthLinks />
+            ) : (
+              <GuestLinks />
+            )}
           </div>
           <IconButton className={classes.menuButton} color='inherit'>
-            <MenuIcon onClick={toggleDrawer(true)} />
+            <span onClick={toggleDrawer(true)}>
+              <MenuIcon />
+            </span>
           </IconButton>
           <Drawer anchor='right' open={state} onClose={toggleDrawer(false)}>
             {
               <Fragment>
                 {!auth.loading && auth.isAuthenticated ? (
-                  <AuthLinks />
+                  <DrawerAuthLinks />
                 ) : (
-                  <GuestLinks />
+                  <DrawerGuestLinks />
                 )}
               </Fragment>
             }
