@@ -17,7 +17,7 @@ import { AddEducation } from './components/profile-form/index';
 import { Profiles } from './components/profiles/index';
 import { Profile } from './components/profile/index';
 import { Posts } from './components/posts/index';
-
+import { Post } from './components/post/index';
 // 権限ルート
 import { PrivateRoute } from './components/routing/index';
 
@@ -68,6 +68,9 @@ const App: FC = () => {
             <PrivateRoute
               path='/add-education'
               component={AddEducation}></PrivateRoute>
+            <PrivateRoute
+              path='/posts/:post_id'
+              component={Post}></PrivateRoute>
             <PrivateRoute path='/posts' component={Posts}></PrivateRoute>
           </Switch>
         </section>

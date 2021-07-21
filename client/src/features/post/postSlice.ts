@@ -11,7 +11,8 @@ import {
   addLikePost,
   removeLikePost,
   deletePost,
-  addPost
+  addPost,
+  getPost
 } from './postAPI';
 import { setAlert, removeAlertAsync } from '../alert/alertSlice';
 
@@ -159,36 +160,50 @@ export const deletePostAsync = createAsyncThunk<string, string, ThunkConfig>(
   }
 );
 
-interface AddPostResponse {
-  _id: string;
-  text: string;
-  name: string;
-  avatar: string;
-  user: string;
-  likes: { _id: string; user: string }[] | [];
-  comments: { _id: string; user: string } | [];
-  date: Date;
-  __v?: number;
-}
+export const addPostAsync = createAsyncThunk<
+  GetPostState,
+  { text: string },
+  ThunkConfig
+>('post/addPost', async (formData, { dispatch, rejectWithValue }) => {
+  try {
+    const response = await addPost(formData);
+    console.log('addPostAsync/response', response);
+    const id = v4();
+    dispatch(setAlert({ message: 'Post Created', alertType: 'success', id }));
+    dispatch(removeAlertAsync({ id, timeout: 3000 }));
+    return response.data;
+  } catch (err: any) {
+    const response = err.response;
+    console.log('rejectWithValue/response', response);
+    const id = v4();
+    dispatch(setAlert({ message: response.data.msg, alertType: 'danger', id }));
+    dispatch(removeAlertAsync({ id, timeout: 3000 }));
+    return rejectWithValue({
+      status: response.status,
+      message: response.data.msg
+    });
+  }
+});
 
-export const addPostAsync = createAsyncThunk<AddPostResponse, any, ThunkConfig>(
-  'post/addPost',
-  async (formData, { dispatch, rejectWithValue }) => {
+export const getPostAsync = createAsyncThunk<GetPostState, string, ThunkConfig>(
+  'post/getPost',
+  async (postId, { dispatch, rejectWithValue }) => {
     try {
-      const response = await addPost(formData);
-      console.log('addPostAsync/response', response);
-      const id = v4();
-      dispatch(setAlert({ message: 'Post Created', alertType: 'success', id }));
-      dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      const response = await getPost(postId);
+      console.log('getPostAsync/response', response);
       return response.data;
     } catch (err: any) {
       const response = err.response;
       console.log('rejectWithValue/response', response);
-      const id = v4();
-      dispatch(
-        setAlert({ message: response.data.msg, alertType: 'danger', id })
-      );
-      dispatch(removeAlertAsync({ id, timeout: 3000 }));
+      const errors = response.data.errors as { msg: string }[];
+      if (errors) {
+        const id = v4();
+        errors.forEach((error: { msg: string }) => {
+          console.log(' error.msg', error.msg);
+          dispatch(setAlert({ message: error.msg, alertType: 'danger', id }));
+          dispatch(removeAlertAsync({ id, timeout: 3000 }));
+        });
+      }
       return rejectWithValue({
         status: response.status,
         message: response.data.msg
@@ -363,14 +378,43 @@ export const postSlice = createSlice({
           loading: false
         };
       })
-      .addCase(addPostAsync.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(
+        addPostAsync.fulfilled,
+        (state, action: PayloadAction<GetPostState>) => {
+          return {
+            ...state,
+            posts: [action.payload, ...state.posts],
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(getPostAsync.pending, (state) => {
         return {
           ...state,
-          posts: [action.payload, ...state.posts],
-          status: 'success',
+          status: 'loading',
           loading: false
         };
-      });
+      })
+      .addCase(getPostAsync.rejected, (state, action: PayloadAction<any>) => {
+        return {
+          ...state,
+          error: action.payload,
+          status: 'failed',
+          loading: false
+        };
+      })
+      .addCase(
+        getPostAsync.fulfilled,
+        (state, action: PayloadAction<GetPostState>) => {
+          return {
+            ...state,
+            post: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      );
   }
 });
 

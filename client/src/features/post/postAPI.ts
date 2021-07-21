@@ -16,11 +16,15 @@ export const deletePost = (postId: string) => {
   return axios.delete(`/api/posts/${postId}`);
 };
 
-export const addPost = (formData: any) => {
+export const addPost = (formData: { text: string }) => {
   const config = {
     headers: {
       'Content-Type': 'application/json'
     }
   };
   return axios.post('/api/posts', formData, config);
+};
+
+export const getPost = (postId: string) => {
+  return axios.get(`/api/posts/${postId}`);
 };
