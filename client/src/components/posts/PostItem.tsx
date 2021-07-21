@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
 
@@ -8,6 +8,7 @@ import { Button } from '../../components/atoms/index';
 
 // スライサー
 import { authStatus } from '../../features/auth/authSlice';
+import { addLikeAsync, removeLikeAsync } from '../../features/post/postSlice';
 
 // スタイル
 import { RoundImage } from '../../styles/index';
@@ -22,6 +23,7 @@ interface PostItemeProps {
 const PostItem: FC<PostItemeProps> = ({
   post: { _id, text, name, avatar, user, likes, comments, date }
 }) => {
+  const dispatch = useDispatch();
   const auth = useSelector(authStatus);
   return (
     <div>
@@ -36,22 +38,32 @@ const PostItem: FC<PostItemeProps> = ({
         <p>
           Posted on <Moment format='YYYY/MM/DD'>{date}</Moment>
         </p>
-        <Button type='button' buttonColor='primary' textColor='text-white'>
+        <button
+          onClick={() => {
+            dispatch(addLikeAsync(_id));
+          }}
+          type='button'
+          className='btn btn-primary text-white'>
           <i className='fas fa-thumbs-up'></i>
           <span> {likes.length}</span>
-        </Button>
-        <Button type='button' buttonColor='primary' textColor='text-white'>
+        </button>
+        <button
+          onClick={() => {
+            dispatch(removeLikeAsync(_id));
+          }}
+          type='button'
+          className='btn btn-primary text-white'>
           <i className='fas fa-thumbs-down'></i>
-        </Button>
+        </button>
 
         <Link to={`/post/${_id}`} target='_blank' rel='noopener noreferrer'>
           会話 <span>{comments.length}</span>
         </Link>
-        {!auth.loading && user === auth.user?._id ? null : (
+        {!auth.loading && user === auth.user?._id ? (
           <Button type='button' buttonColor='danger' textColor='text-white'>
             <i className='fas fa-times'></i>
           </Button>
-        )}
+        ) : null}
       </div>
     </div>
   );

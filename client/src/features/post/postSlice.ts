@@ -6,7 +6,7 @@ import {
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { v4 } from 'uuid';
-import { getAllPosts } from './postAPI';
+import { getAllPosts, addLikePost, removeLikePost } from './postAPI';
 import { setAlert, removeAlertAsync } from '../alert/alertSlice';
 
 export interface GetPostState {
@@ -15,8 +15,8 @@ export interface GetPostState {
   name: string;
   avatar: string;
   user: string;
-  likes: any[];
-  comments: any[];
+  likes: any[] | [];
+  comments: any[] | [];
   date: Date;
   __v?: string;
 }
@@ -76,6 +76,55 @@ export const getAllPostsAsync = createAsyncThunk<
   }
 });
 
+interface AddLikeOrUnlikeResponse {
+  _id: string;
+  user: string;
+}
+
+export const addLikeAsync = createAsyncThunk<
+  { postId: string; likes: AddLikeOrUnlikeResponse[] | [] },
+  string,
+  ThunkConfig
+>('post/addLikePost', async (postId, { dispatch, rejectWithValue }) => {
+  try {
+    const response = await addLikePost(postId);
+    console.log('addLikeAsync/response', response);
+    return { postId, likes: response.data };
+  } catch (err: any) {
+    const response = err.response;
+    console.log('rejectWithValue/response', response);
+    const id = v4();
+    dispatch(setAlert({ message: response.data.msg, alertType: 'danger', id }));
+    dispatch(removeAlertAsync({ id, timeout: 3000 }));
+    return rejectWithValue({
+      status: response.status,
+      message: response.data.msg
+    });
+  }
+});
+
+export const removeLikeAsync = createAsyncThunk<
+  { postId: string; likes: AddLikeOrUnlikeResponse[] | [] },
+  string,
+  ThunkConfig
+>('post/removeLikePost', async (postId, { dispatch, rejectWithValue }) => {
+  try {
+    const response = await removeLikePost(postId);
+    console.log('removeLikeAsync/response', response);
+    return { postId, likes: response.data };
+  } catch (err: any) {
+    const response = err.response;
+    console.log('rejectWithValue/response', response);
+    const id = v4();
+    dispatch(setAlert({ message: response.data.msg, alertType: 'danger', id }));
+    dispatch(removeAlertAsync({ id, timeout: 3000 }));
+    return rejectWithValue({
+      status: response.status,
+      message: response.data.msg
+    });
+  }
+});
+
 export const postSlice = createSlice({
   name: 'post',
   initialState,
@@ -107,7 +156,7 @@ export const postSlice = createSlice({
           return {
             ...state,
             error: action.payload,
-            status: 'success',
+            status: 'failed',
             loading: false
           };
         }
@@ -118,6 +167,81 @@ export const postSlice = createSlice({
           return {
             ...state,
             posts: action.payload,
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(addLikeAsync.pending, (state) => {
+        return {
+          ...state,
+          status: 'loading',
+          loading: false
+        };
+      })
+      .addCase(addLikeAsync.rejected, (state, action: PayloadAction<any>) => {
+        return {
+          ...state,
+          error: action.payload,
+          status: 'failed',
+          loading: false
+        };
+      })
+      .addCase(
+        addLikeAsync.fulfilled,
+        (
+          state,
+          action: PayloadAction<{
+            postId: string;
+            likes: AddLikeOrUnlikeResponse[] | [];
+          }>
+        ) => {
+          return {
+            ...state,
+            posts: state.posts.map((post) =>
+              post._id === action.payload.postId
+                ? { ...post, likes: action.payload.likes }
+                : post
+            ),
+            status: 'success',
+            loading: false
+          };
+        }
+      )
+      .addCase(removeLikeAsync.pending, (state) => {
+        return {
+          ...state,
+          status: 'loading',
+          loading: false
+        };
+      })
+      .addCase(
+        removeLikeAsync.rejected,
+        (state, action: PayloadAction<any>) => {
+          return {
+            ...state,
+            error: action.payload,
+            status: 'failed',
+            loading: false
+          };
+        }
+      )
+      .addCase(
+        removeLikeAsync.fulfilled,
+        (
+          state,
+          action: PayloadAction<{
+            postId: string;
+            likes: AddLikeOrUnlikeResponse[] | [];
+          }>
+        ) => {
+          return {
+            ...state,
+            posts: state.posts.map((post) =>
+              post._id === action.payload.postId
+                ? { ...post, likes: action.payload.likes }
+                : post
+            ),
             status: 'success',
             loading: false
           };
