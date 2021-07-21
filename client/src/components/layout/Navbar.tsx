@@ -167,11 +167,11 @@ const Navbar: FC = () => {
               <GuestLinks />
             )}
           </div>
-          <IconButton className={classes.menuButton} color='inherit'>
-            <span onClick={toggleDrawer(true)}>
+          <div onClick={toggleDrawer(true)}>
+            <IconButton className={classes.menuButton} color='inherit'>
               <MenuIcon />
-            </span>
-          </IconButton>
+            </IconButton>
+          </div>
           <Drawer anchor='right' open={state} onClose={toggleDrawer(false)}>
             {
               <Fragment>
