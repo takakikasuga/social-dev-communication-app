@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const morgan = require('morgan');
+const path = require('path');
 
 const app = express();
 // 各ルーターのインポート
@@ -24,6 +25,14 @@ app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/posts', postsRouter);
 app.use('/api/profile', profileRouter);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
