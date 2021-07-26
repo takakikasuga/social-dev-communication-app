@@ -27,7 +27,7 @@ app.use('/api/posts', postsRouter);
 app.use('/api/profile', profileRouter);
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
+  app.use(express.static(__dirname + '/public'));
 
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'client', 'public', 'index.html'));
